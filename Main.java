@@ -39,8 +39,22 @@ public class Main {
 			}
 		} while (done == false);
 		
-		System.out.println(WorldEditor.m_city.get_all_info());
-		System.out.println(WorldEditor.m_route.get_all_info());
+		/*
+		 * These run at end to give info about the state of the last active 
+		 * City and Route for debugging purposes. 
+		 */
+		try {
+			System.out.println(WorldEditor.m_city.get_all_info());
+		}
+		catch (NullPointerException e) {
+			System.out.println("No City was active, so no info could be returned.");
+		}
+		try {
+			System.out.println(WorldEditor.m_route.get_all_info());
+		}
+		catch (NullPointerException e) {
+			System.out.println("No Route was active, so no info could be returned.");
+		}
 	}
 
 }

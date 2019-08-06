@@ -142,7 +142,7 @@ public class routeEditor extends WorldEditor {
 				if (a < 1) {
 					System.out.println(OutOfRangeException);
 				}
-				else if (a > 8) {
+				else if (a > 9) {
 					System.out.println(OutOfRangeException);
 				}
 				else {
@@ -163,13 +163,14 @@ public class routeEditor extends WorldEditor {
 		System.out.println("What changes do you want to make to " + m_route.get_name() + "?");
 		String output = "";
 		output = output + "1) Name (Unavailable) \n";
-		output = output + "2) Length \n";
-		output = output + "3) Terrain Type \n";
-		output = output + "4) Encounters \n";
-		output = output + "5) View Route Details \n";
-		output = output + "6) Delete Route \n";
-		output = output + "7) Save Route \n";
-		output = output + "8) Return to Route Choices \n";
+		output = output + "2) Description \n";
+		output = output + "3) Length \n";
+		output = output + "4) Terrain Type \n";
+		output = output + "5) Encounters \n";
+		output = output + "6) View Route Details \n";
+		output = output + "7) Delete Route \n";
+		output = output + "8) Save Route \n";
+		output = output + "9) Return to Route Choices \n";
 		System.out.println(output); 
 	}
 	
@@ -188,26 +189,32 @@ public class routeEditor extends WorldEditor {
 				System.out.println("Name editing is not yet avialable.");
 				break;
 			case 2:
+				scanner.nextLine();
+				System.out.println("What would you like the new decsription to be?");
+				String descrip = scanner.nextLine();
+				m_route.set_description(descrip);
+				System.out.println("Okay, the new description is: ");
+				System.out.println(m_route.get_description());
+				break; 
+			case 3:
 				Worldbuilder.constructLength(); 
 				break;
-			case 3:
+			case 4:
 				Worldbuilder.constructTerrain(m_route);
 				break;
-			case 4:
-				encounterEditor.edit(m_route); 
-				//Worldbuilder.addEncounters();
-				//deleteEncounters(); 
-				break; 
 			case 5:
+				encounterEditor.edit(m_route); 
+				break; 
+			case 6:
 				System.out.println(m_route.get_all_info());
 				break;
-			case 6:
+			case 7:
 				done = deleteRoute(); 
 				break; 
-			case 7:
+			case 8:
 				Worldbuilder.saveRoute();
 				break;
-			case 8:
+			case 9:
 				done = true; 
 				break; 
 		}

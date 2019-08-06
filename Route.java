@@ -18,6 +18,7 @@ public class Route {
 	private int m_route_id = 0; 
 	private int m_length = 1; //how many days to complete 
 	private String m_name = "Arbitrary"; 
+	private String m_description = "No description available.";
 	
 	private ArrayList<Encounter> m_day_encounters = new ArrayList<Encounter>();
 	private ArrayList<Encounter> m_night_encounters = new ArrayList<Encounter>();
@@ -29,10 +30,12 @@ public class Route {
 	 * @param	destination City	:City in which this route ends
 	 */
 	public Route (City origin, City destination) {
+		
 		m_origin = origin;
 		m_destination = destination; 
 		route_count++;
 		m_route_id = route_count;
+		
 	}
 	
 	/*
@@ -41,7 +44,9 @@ public class Route {
 	 * @return m_origin City	:the City from which this Route originates
 	 */
 	public City get_origin () {
+		
 		return m_origin;
+		
 	}
 	
 	/*
@@ -50,7 +55,9 @@ public class Route {
 	 * @return m_destination City	:the City where this Route ends
 	 */
 	public City get_destination () {
+		
 		return m_destination;
+		
 	}
 	
 	/*
@@ -59,7 +66,9 @@ public class Route {
 	 * @return m_length Integer		:the int value of how many days it takes to travel this Route
 	 */
 	public int get_length () {
+		
 		return m_length;
+		
 	}
 	
 	/*
@@ -68,7 +77,20 @@ public class Route {
 	 * @return m_name String	:the Route's name
 	 */
 	public String get_name () {
+		
 		return m_name; 
+		
+	}
+	
+	/*
+	 * Returns the description of the Route.
+	 * 
+	 * @return	m_description String	:the description of the Route 
+	 */
+	public String get_description () {
+		
+		return m_description; 
+		
 	}
 	
 	/*
@@ -77,7 +99,9 @@ public class Route {
 	 * @return m_route_id Integer	:the primary key for the Route
 	 */
 	public int get_route_id () {
+		
 		return m_route_id;
+		
 	}
 	
 	/*
@@ -86,7 +110,9 @@ public class Route {
 	 * @return route_count Integer	:the number of routes in the Country
 	 */
 	public static int get_route_count () {
+		
 		return route_count; 
+		
 	}
 	
 	/*
@@ -95,7 +121,9 @@ public class Route {
 	 * @return m_terrainType TerrainType	:what variety of terrain is this route 
 	 */
 	public TerrainType get_terrainType() {
+		
 		return m_terrainType; 
+		
 	}
 	
 	/*
@@ -105,7 +133,9 @@ public class Route {
 	 * @return	m_day_encounters ArrayList<Encounters> 	:a list of Encounter objects associated with this Route
 	 */
 	public ArrayList<Encounter> get_day_encounters () {
+		
 		return m_day_encounters;
+		
 	}
 	
 	/*
@@ -115,7 +145,9 @@ public class Route {
 	 * @return	m_night_encounters ArrayList<Encounters> 	:a list of Encounter objects associated with this Route
 	 */
 	public ArrayList<Encounter> get_night_encounters () {
+		
 		return m_night_encounters; 
+		
 	}
 	
 	/*
@@ -124,10 +156,12 @@ public class Route {
 	 * @return 	output String	:a huge String containing all Route details 
 	 */
 	public String get_all_info () {
+		
 		String output = "";
 		
 		output = output + "Route #" + m_route_id + " " + m_name + "\n"; 
 		output = output + "( " + m_origin.get_name() + " ----> " + m_destination.get_name() + " ) \n";
+		output = output + "Description: " + m_description + "\n";
 		output = output + "Terrain Type: " + m_terrainType + "\n"; 
 		output = output + "Length: " + m_length + " Days' Travel \n";
 		output = output + "Day Encounters: \n";
@@ -143,6 +177,7 @@ public class Route {
 			y++;
 		}
 		return output; 
+		
 	}
 	
 	/*
@@ -153,8 +188,10 @@ public class Route {
 	 * @param	name String		:What this encounter is to be called 
 	 */
 	public void add_day_encounters (Route route, String name) {
+		
 		Encounter encounter = new Encounter(route, name.strip());
 		m_day_encounters.add(encounter);
+		
 	}
 	
 	/*public void add_night_encounters (String name) {
@@ -167,7 +204,9 @@ public class Route {
 	 * @param	dureation Integer	:How long (how many days) does it take to travel this Route. 
 	 */
 	public void set_length (int duration) {
+		
 		m_length = duration; 
+		
 	}
 	
 	/*
@@ -176,7 +215,20 @@ public class Route {
 	 * @param	name String		:What the route is called 
 	 */
 	public void set_name (String name) {
+		
 		m_name = name; 
+		
+	}
+	
+	/*
+	 * Sets the description of the Route
+	 * 
+	 * @param	descrip String		:how the Route should be described 
+	 */
+	public void set_description (String descrip) {
+		
+		m_description = descrip; 
+		
 	}
 	
 	/*
@@ -185,7 +237,9 @@ public class Route {
 	 * @param	tType TerrainType		:What kind of Terrain is it 
 	 */
 	public void set_terrainType (TerrainType tType) {
+		
 		m_terrainType = tType; 
+		
 	}
 
 }

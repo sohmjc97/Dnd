@@ -514,9 +514,9 @@ public class WorldEditor extends Worldbuilder {
 		
 		//values will hold terrain type and length
 		ArrayList<String> values = new ArrayList<String>(); 
-		
-		values.add(each[0].split(": ")[1]);
-		values.add(each[1].split(": ")[1].split(" ")[0]);
+		m_route.set_description(each[0].split(": ")[1]);
+		values.add(each[1].split(": ")[1]);
+		values.add(each[2].split(": ")[1].split(" ")[0]);
 		
 		int length = Integer.parseInt(values.get(1));
 		m_route.set_length(length);
