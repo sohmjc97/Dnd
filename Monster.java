@@ -7,6 +7,11 @@ public class Monster extends Being{
 	 * A class of being that will represent enemies to the PC's 
 	 */
 	
+	private Encounter m_encounter = null; 
+	private Route m_r_host = null;
+	private City m_c_host = null; 
+	private Country m_country = null; 
+	
 	/*
 	 * Monster constructors.
 	 * A Monster can be initialized with a name, a level, or a name and level. 
@@ -28,6 +33,39 @@ public class Monster extends Being{
 		
 		m_name = name; 
 		m_lvl = lvl;
+		
+	}
+	
+	/*
+	 * This is the main constructor we will be using since it links the Monster
+	 * to an Encounter, Host (Route or City). and Country upon initialization. 
+	 * It also populates the Ability Mods to default values. 
+	 * 
+	 * @param	name String				:the Monster's name
+	 * @param	encounter Encounter		:the Encounter to which this Monster belongs. 
+	 */
+	public Monster (String name, Encounter encounter) {
+		
+		m_name  = name;
+		m_encounter = encounter; 
+		m_r_host = m_encounter.get_route(); 
+		m_c_host = m_encounter.get_city(); 
+		if (m_r_host == null) {
+			m_country = m_encounter.get_city().get_country();
+		}
+		else if (m_c_host == null) {
+			m_country = m_encounter.get_route().get_country(); 
+		}
+		else {
+			System.out.println("A problem occured when trying to load Monster's country.");
+		}
+		
+		m_abilityMods.put("STR", 0);
+		m_abilityMods.put("DEX", 0);
+		m_abilityMods.put("WIS", 0);
+		m_abilityMods.put("INT", 0);
+		m_abilityMods.put("CON", 0);
+		m_abilityMods.put("CHA", 0);
 		
 	}
 	
@@ -202,7 +240,7 @@ public class Monster extends Being{
 	 * @return 	m_dmgDie Integer	:the integer value of this monster's damage die (i.e. 4, 6, 10, etc.) 
 	 */
 	public int get_dmgDie() {
-\	   
+		
 	    return m_dmgDie;
 	    
 	}
@@ -519,6 +557,50 @@ public class Monster extends Being{
 	        
 	    }
 	    
+	}
+	
+	/*
+	 * Returns the Country to which this Monster belongs.
+	 * 
+	 * @return	m_country Country	:the Country to which this Monster belongs
+	 */
+	public Country get_country() {
+		
+		return m_country; 
+		
+	}
+	
+	/*
+	 * Returns the Route to which this Monster belongs.
+	 * 
+	 * @return	m_r_host Route	:the Route to which this Monster belongs
+	 */
+	public Route get_r_host () {
+		
+		return m_r_host; 
+		
+	}
+	
+	/*
+	 * Returns the City to which this Monster belongs.
+	 * 
+	 * @return		m_c_host City	:the City to which this Monster belongs
+	 */
+	public City get_c_host () {
+		
+		return m_c_host; 
+		
+	}
+	
+	/*
+	 * Returns the Encounter to which this Monster belongs.
+	 * 
+	 * @return		m_encounter Encounter		:the Encounter to which this Monster belongs
+	 */
+	public Encounter get_encounter () {
+		
+		return m_encounter; 
+		
 	}
 	
     /*

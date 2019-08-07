@@ -121,7 +121,7 @@ public class Encounter {
 	 */
 	public Monster add_enemy (String name) {
 		
-		Monster enemy = new Monster(name);
+		Monster enemy = new Monster(name, this);
 		m_enemy_list.add(enemy);
 		return enemy;
 		

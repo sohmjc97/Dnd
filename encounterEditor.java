@@ -1,6 +1,6 @@
 package Dnd;
 
-public class encounterEditor <T> extends WorldEditor {
+public class encounterEditor extends WorldEditor {
 	
 	protected static Encounter m_encounter = null; 
 	protected static Route r_host = null;
@@ -329,8 +329,8 @@ public class encounterEditor <T> extends WorldEditor {
 				}
 				break;
 			case 4:
-				//monsterEditor.edit(); 
-				editEnemies(); 
+				monsterEditor.edit(); 
+				//editEnemies(); 
 				//System.out.println(m_encounter.get_enemies()); 
 				break; 
 			case 5:

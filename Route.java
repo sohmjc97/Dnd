@@ -127,6 +127,17 @@ public class Route {
 	}
 	
 	/*
+	 * Returns the Country to which this Route belongs
+	 * 
+	 * @return		Country		:the Country to which the Route's origin City belongs 
+	 */
+	public Country get_country () {
+		
+		return m_origin.get_country(); 
+		
+	}
+	
+	/*
 	 * Returns the Route's list of day encounters
 	 * Day encounters are currently only encounters implemented, so this is default for encounters in general 
 	 * 

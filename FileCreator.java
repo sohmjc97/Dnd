@@ -13,16 +13,36 @@ public class FileCreator {
 	private Formatter x; 
 	
 	/*
-	 * Not yet implemented in an Editor, but will eventually have a path that goes like
-	 * C:\Users\USER\Desktop\DM\Countries\Country\Route or City\Encounters\Encounter\Monsters\Monster\Monster.txt
+	 * Constructor to create a text file with information on the given Monster
 	 * 
 	 * @param	 monster Monster	:a Monster object for which you want a text file to be created
 	 */
 	public FileCreator (Monster monster) {
-		
-		open_file (monster.get_name() + ".txt");
-		addRecords(monster.get_all_stats());
-		close_file(); 
+		String countryName = monster.get_country().get_country_name();
+		String encounterName = monster.get_encounter().get_name();
+		System.out.println(countryName + " -- " + encounterName);
+		if (monster.get_c_host() != null) {
+			String cityName = monster.get_c_host().get_name();
+			System.out.println(cityName);
+			File dir = new File("C:\\Users\\Fusion360\\Desktop\\DM\\Countries\\" + countryName + "\\Cities\\" + cityName + "\\Encounters\\" + encounterName + "\\Enemies\\" + monster.get_name());
+			dir.mkdirs();
+			open_file ("C:\\Users\\Fusion360\\Desktop\\DM\\Countries\\" + countryName + "\\Cities\\" + cityName + "\\Encounters\\" + encounterName + "\\Enemies\\" + monster.get_name() + "\\" + monster.get_name() + ".txt");
+			//System.out.println(cityName);
+			addRecords(monster.get_all_stats());
+			close_file(); 
+		}
+		else if (monster.get_r_host() != null) {
+			String routeName = monster.get_r_host().get_name();
+			System.out.println(routeName);
+			File dir = new File("C:\\Users\\Fusion360\\Desktop\\DM\\Countries\\" + countryName + "\\Routes\\" + routeName + "\\Encounters\\" + encounterName + "\\Enemies\\" + monster.get_name());
+			dir.mkdirs();
+			open_file ("C:\\Users\\Fusion360\\Desktop\\DM\\Countries\\" + countryName + "\\Routes\\" + routeName + "\\Encounters\\" + encounterName + "\\Enemies\\" + monster.get_name() + "\\" + monster.get_name() + ".txt");
+			addRecords(monster.get_all_stats());
+			close_file(); 
+		}
+		else {
+			System.out.println("There was a problem opening the Enemy's file.");
+		}
 		
 	}
 	

@@ -630,11 +630,9 @@ public class WorldEditor extends Worldbuilder {
 				System.out.println("Ruler has been changed to: " + m_country.get_ruler() + "\n");
 				break; 
 			case 6:
-				//System.out.println("City editiing not available.");
 				cityEditor.edit(); 
 				break;
 			case 7:
-				//ystem.out.println("Route editiing not available.");
 				routeEditor.edit();
 				break; 
 			case 8:

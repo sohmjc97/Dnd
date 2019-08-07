@@ -51,22 +51,23 @@ public abstract class Being {
     protected Country m_Country = null;
     protected Encounter m_encounter = null; 
     
-    protected int m_lvl;
-	protected int m_hp;
-	protected int m_maxhp; 
-	protected int m_ac;
-	protected int m_xp; 
+    protected int m_lvl = 1;
+	protected int m_hp = 4;
+	protected int m_maxhp = 4; 
+	protected int m_ac = 4;
+	protected int m_xp = 0; 
 	protected int m_speed; //todo
-	protected int m_dmgDie;
-	protected int m_numdmgDie; 
-	protected int m_dmgMod; 
+	protected int m_dmgDie = 4;
+	protected int m_numdmgDie = 1; 
+	protected int m_dmgMod = 0; 
 	
-	protected String m_attackMod; 
-	protected String m_description; 
-	protected String m_name; 
+	protected String m_attackMod = "STR"; 
+	protected String m_description = "No description available."; 
+	protected String m_name = "Unkown"; 
 	
 	HashMap<String, String> m_ItemDrop = new HashMap<String, String>();
 	HashMap<String, Integer> m_abilityMods = new HashMap<String, Integer>();
+	
 	ArrayList<DamageTypes> m_weaknesses = new ArrayList<DamageTypes>(); 
 	ArrayList<DamageTypes> m_resistances = new ArrayList<DamageTypes>(); 
 	ArrayList<StatusCondition> m_condition = new ArrayList<StatusCondition>(); //todo

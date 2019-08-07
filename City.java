@@ -516,6 +516,9 @@ public class City {
 		
 	}
 	
+	/*
+	 * Prints a list of the City's Encounters
+	 */
 	public void list_encounters () {
 		
 		int n = 1;
@@ -783,6 +786,7 @@ public class City {
 		else {
 			for (Route i: m_routesList) {
 				output = output + "#" + m + " " + i.get_name() + " " + i.get_origin().get_name() + " --> " + i.get_destination().get_name() + " " + "\n";
+				m++; 
 			}
 		}
 		        
