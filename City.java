@@ -752,6 +752,12 @@ public class City {
         
     }
     
+    public void removeEncounter (Encounter encounter) {
+    	
+    	m_encounters.remove(encounter);
+    	
+    }
+    
     /*
      * Returns a formatted String containing all of the City's information 
      * NOTE: This function got weird at one point and got obsessed with the lines

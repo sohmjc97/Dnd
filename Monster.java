@@ -346,7 +346,7 @@ public class Monster extends Being{
 	 * values of the Attack Modifier
 	 */
 	public void list_attackMod() {
-\	    
+		
 	    System.out.println("Attack Mod (" + m_attackMod +"): " + get_attackMod());
 	    
 	}
@@ -399,7 +399,7 @@ public class Monster extends Being{
 	 */
 	public void list_dmgMod() {
 		
-	    System.out.println("Damage Die: " + m_dmgMod);
+	    System.out.println("Damage Mod: " + m_dmgMod);
 		
 	}
 
@@ -618,7 +618,8 @@ public class Monster extends Being{
 		output = output + "Level: " + m_lvl + "\n";
 		output = output + "HP: " + m_hp + "\n";
 		output = output + "AC: " + m_ac + "\n";
-		output = output + "Damage Dice: " + m_dmgDie + "\n";
+		output = output + "XP: " + m_xp + "\n";
+		output = output + "Damage Die: " + m_dmgDie + "\n";
 		output = output + "Number of Damage Dice: " + m_numdmgDie + "\n";
 		output = output + "Damage Mod: " + m_dmgMod +"\n";
 		output = output + "Attack Mod: " + m_attackMod +"\n";
@@ -654,8 +655,11 @@ public class Monster extends Being{
 	    list_lvl();
 	    list_hp();
 	    list_ac();
-	    
-	    System.out.println("Rwearded XP: " + m_xp);
+	    list_dmgDie();
+	    list_numdmgDie(); 
+	    list_dmgMod(); 
+	    list_attackMod(); 
+	    list_XP();
 	    
 	    list_abilityMods();
 	    list_weaknesses();
@@ -689,6 +693,12 @@ public class Monster extends Being{
 		m_abilityMods.put("CHA", cha);
 		m_abilityMods.put("DEX", dex);
 		m_abilityMods.put("CON", con);
+		
+	}
+	
+	public void set_AbilityMod (String Abb, int value) {
+		
+		m_abilityMods.put(Abb, value);
 		
 	}
 	

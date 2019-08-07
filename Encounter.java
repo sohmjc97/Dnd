@@ -27,6 +27,7 @@ public class Encounter {
 		
 		m_name = name;
 		m_route = route; 
+		m_country = route.get_country();
 		encounter_count++;
 		m_encounter_id = encounter_count;
 		
@@ -42,6 +43,7 @@ public class Encounter {
 		
 		m_name = name;
 		m_city = city; 
+		m_country = city.get_country();
 		encounter_count++;
 		m_encounter_id = encounter_count;
 		
@@ -161,6 +163,40 @@ public class Encounter {
 		
 	}
 	
+	public void change_host (Route newRoute) {
+		
+		if (m_city == null) {
+			Route oldRoute = m_route; 
+			oldRoute.get_day_encounters().remove(this);
+			newRoute.add_day_encounters(newRoute, m_name);
+			m_route = newRoute; 
+		}
+		else if (m_route == null) {
+			City oldCity = m_city;
+			oldCity.get_encounters().remove(this);
+			newRoute.add_day_encounters(newRoute, m_name);
+			m_route = newRoute; 
+		}
+		
+	}
+	
+	public void change_host (City newCity) {
+		
+		if (m_city == null) {
+			Route oldRoute = m_route; 
+			oldRoute.removeEncounter(this);
+			newCity.add_encounters(newCity, m_name);
+			m_city = newCity; 
+		}
+		else if (m_route == null) {
+			City oldCity = m_city;
+			oldCity.removeEncounter(this);
+			newCity.add_encounters(newCity, m_name);
+			m_city = newCity; 
+		}
+		
+	}
+	
 	/*
 	 * Returns a formatted String of all the Encounter's info separated by "\n"
 	 */
@@ -192,6 +228,17 @@ public class Encounter {
 	public void list_all_info() {
 		
 		System.out.println(this.get_all_info());
+		
+	}
+
+	/*
+	 * Returns the Country to which this Encounter belongs.
+	 * 
+	 * @return 	Country		:the Country this Encounter object belongs to 
+	 */
+	public Country get_country() {
+	
+		return m_country; 
 		
 	}
 }

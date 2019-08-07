@@ -2,6 +2,8 @@ package Dnd;
 
 import java.util.ArrayList;
 
+import Dnd.Being.DamageTypes;
+
 public class monsterEditor extends encounterEditor{
 	/*
 	 * Runs a UI for editing Monsters within Encounters 
@@ -239,7 +241,9 @@ public class monsterEditor extends encounterEditor{
 		for (String i: m_enemy.m_abilityMods.keySet()) {
 			output = output + i + ": " + m_enemy.m_abilityMods.get(i) + "\n";
 		}
-		output = output + "10) Return to Previous Menu \n";
+		output = output + "10) Weaknesses \n";
+		output = output + "11) Resistances \n";
+		output = output + "12) Return to Previous Menu \n";
 
 		System.out.println(output);
 	}
@@ -258,7 +262,7 @@ public class monsterEditor extends encounterEditor{
 				if (a < 0) {
 					System.out.println(OutOfRangeException);
 				}
-				else if (a > 10) {
+				else if (a > 12) {
 					System.out.println(OutOfRangeException);
 				}
 				else {
@@ -311,6 +315,14 @@ public class monsterEditor extends encounterEditor{
 			editAbilityMods(); 
 			break;
 		case 10:
+			addWeaknesses();
+			removeWeaknesses();
+			break; 
+		case 11:
+			addResistances(); 
+			removeResistances(); 
+			break; 
+		case 12:
 			done = true;
 			break; 
 		
@@ -763,7 +775,7 @@ public class monsterEditor extends encounterEditor{
 			}
 			catch (Exception e) {
 				System.out.println(OneOrZeroException);
-				System.out.println("Error resulting from:  " + e);
+				//System.out.println("Error resulting from:  " + e);
 				scanner.next();
 			}
 		} while (done == false);
@@ -803,13 +815,201 @@ public class monsterEditor extends encounterEditor{
 			}
 			catch (Exception e) {
 				System.out.println(OneOrZeroException);
-				System.out.println("Error resulting from:  " + e);
+				//System.out.println("Error resulting from:  " + e);
 				scanner.next();
 			}
 			
 		} while (done == false);
 		
 		return removed; 
+	}
+	
+	/*
+	 * Asks User to choose which, if any, weaknesses will be added to the Monster
+	 */
+	private static void addWeaknesses() {
+		
+		boolean done = false;
+		do {
+			System.out.println("Type the name of the damage type you wish to add as a weakness.");
+			int n = 1;
+			for (DamageTypes i: DamageTypes.values()) {
+				System.out.println(n + ") " + i);
+				n++;
+			}
+			System.out.println(n + ") " + "Add no weaknesses");
+			try {
+				int a = scanner.nextInt();
+				if (a < 1) {
+					System.out.println(OutOfRangeException);
+				}
+				else if (a > DamageTypes.values().length + 1) {
+					System.out.println(OutOfRangeException);
+				}
+				else {
+					int x = 1; 
+					for (DamageTypes i:DamageTypes.values()) {
+						if (a == x) {
+							m_enemy.add_weakness(i);
+							System.out.println(i + " added as a weakness.");
+						}
+						x++;
+					}
+					if (a == n) {
+						System.out.println("No new weaknesses were added.");
+						done = true;
+					}
+				}
+			}
+			catch(Exception e) {
+				System.out.println(MustBeIntException);
+				//System.out.println("Error resulting from:  " + e);
+				scanner.next();
+			}
+			
+		} while (done == false);
+		
+	}
+	
+	/*
+	 * Asks User to choose which, if any, weaknesses will be removed from the Monster
+	 */
+	private static void removeWeaknesses() {
+		
+		boolean done = false;
+		do {
+			System.out.println("Type the name of the damage type you wish to remove as a weakness.");
+			int n = 1;
+			for (DamageTypes i: DamageTypes.values()) {
+				System.out.println(n + ") " + i);
+				n++;
+			}
+			System.out.println(n + ") " + "Remove no weaknesses");
+			try {
+				int a = scanner.nextInt();
+				if (a < 1) {
+					System.out.println(OutOfRangeException);
+				}
+				else if (a > DamageTypes.values().length + 1) {
+					System.out.println(OutOfRangeException);
+				}
+				else {
+					int x = 1; 
+					for (DamageTypes i:DamageTypes.values()) {
+						if (a == x) {
+							m_enemy.remove_weakness(i);
+							System.out.println(i + " removed as a weakness.");
+						}
+						x++;
+					}
+					if (a == n) {
+						System.out.println("No new weaknesses were removed.");
+						done = true;
+					}
+				}
+			}
+			catch(Exception e) {
+				System.out.println(MustBeIntException);
+				//System.out.println("Error resulting from:  " + e);
+				scanner.next();
+			}
+			
+		} while (done == false);
+		
+	}
+	
+	/*
+	 * Asks User to choose which, if any, resistances will be added to the Monster
+	 */
+	private static void addResistances () {
+		
+		boolean done = false;
+		do {
+			System.out.println("Type the name of the damage type you wish to add as a resistance.");
+			int n = 1;
+			for (DamageTypes i: DamageTypes.values()) {
+				System.out.println(n + ") " + i);
+				n++;
+			}
+			System.out.println(n + ") " + "Add no resistances");
+			try {
+				int a = scanner.nextInt();
+				if (a < 1) {
+					System.out.println(OutOfRangeException);
+				}
+				else if (a > DamageTypes.values().length + 1) {
+					System.out.println(OutOfRangeException);
+				}
+				else {
+					int x = 1; 
+					for (DamageTypes i:DamageTypes.values()) {
+						if (a == x) {
+							m_enemy.add_resistance(i);
+							System.out.println(i + " added as a resistance.");
+						}
+						x++;
+					}
+					if (a == n) {
+						System.out.println("No new resistances were added.");
+						done = true;
+					}
+				}
+			}
+			catch(Exception e) {
+				System.out.println(MustBeIntException);
+				//System.out.println("Error resulting from:  " + e);
+				scanner.next();
+			}
+			
+		} while (done == false);
+		
+	}
+	
+	/*
+	 * Asks User to choose which, if any, resistances will be removed from the Monster
+	 */
+	private static void removeResistances () {
+		
+		boolean done = false;
+		do {
+			System.out.println("Type the name of the damage type you wish to remove as a resistance.");
+			int n = 1;
+			for (DamageTypes i: DamageTypes.values()) {
+				System.out.println(n + ") " + i);
+				n++;
+			}
+			System.out.println(n + ") " + "Remove no resistances");
+			try {
+				int a = scanner.nextInt();
+				if (a < 1) {
+					System.out.println(OutOfRangeException);
+				}
+				else if (a > DamageTypes.values().length + 1) {
+					System.out.println(OutOfRangeException);
+				}
+				else {
+					int x = 1; 
+					for (DamageTypes i:DamageTypes.values()) {
+						if (a == x) {
+							m_enemy.remove_resistance(i);
+							System.out.println(i + " removed as a resistance.");
+						}
+						x++;
+					}
+					if (a == n) {
+						System.out.println("No new resistances were removed.");
+						done = true;
+					}
+				}
+			}
+			catch(Exception e) {
+				System.out.println(MustBeIntException);
+				//System.out.println("Error resulting from:  " + e);
+				scanner.next();
+			}
+			
+		} while (done == false);
+		
 	}
 	
 }

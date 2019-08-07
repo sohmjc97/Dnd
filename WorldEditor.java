@@ -3,6 +3,7 @@ package Dnd;
 import java.io.FileNotFoundException;
 import java.util.*;
 
+import Dnd.Being.DamageTypes;
 import Dnd.Country.CityType;
 import Dnd.Country.TerrainType; 
 
@@ -10,6 +11,8 @@ public class WorldEditor extends Worldbuilder {
 	/*
 	 * Runs UI for world editing, beginning with a country and everything inside of it. 
 	 */
+	
+	public static Monster m_enemy = null; 
 	
 	/*
 	 * Main function of WorldEditor
@@ -47,12 +50,14 @@ public class WorldEditor extends Worldbuilder {
 					return country;
 				}
 				catch (Exception e) {
-					System.out.println("There was a problem opening the country file.Try again. \n" + e);
+					System.out.println("There was a problem opening the country file. Try again.");
+					System.out.println("Error resulting from: " + e);
 					//scanner.next();
 				}
 			}
 			catch (Exception e) {
-				System.out.println (GenericException + "\n" + e);
+				System.out.println (GenericException);
+				System.out.println("Error resulting from: " + e);
 				//scanner.next();
 			}
 		}while (done == false);
@@ -113,7 +118,8 @@ public class WorldEditor extends Worldbuilder {
 				}
 			}
 			catch (Exception e) {
-				System.out.println("There was an issue when parsing the country file");
+				System.out.println("There was an issue when parsing the country file.");
+				System.out.println("Error resulting from: " + e);
 			}
 			
 		}
@@ -229,9 +235,9 @@ public class WorldEditor extends Worldbuilder {
 			//System.out.println(buildings);
 						
 			String encounters = filesearch.parseFile(i.get_name(), ")", i.get_country());
-			System.out.println("Encounters: " + encounters);
+			//System.out.println("Encounters: " + encounters);
 			//System.out.println(npc_descrip_list);
-			System.out.println("Got to through file parsing.");
+			//System.out.println("Got to through file parsing.");
 
 			populateCityVariable(attributeResults, npc_descrip_list, buildings, encounters, i); 
 
@@ -303,11 +309,11 @@ public class WorldEditor extends Worldbuilder {
 			System.out.println("No encounters to add.");
 		}
 		else {
-			System.out.println("Encounters String -- " + encounters); 
+			//System.out.println("Encounters String -- " + encounters); 
 			String[] encounter_array = encounters.split("\n");
 			//int i = 1;
 			for (String item: encounter_array) {
-				System.out.println("Lines of encounter String --" + item); 
+				//System.out.println("Lines of encounter String --" + item); 
 				String info = item.split("\\)")[1];
 	
 				//String[] splitInfo = info.split(":");
@@ -319,7 +325,7 @@ public class WorldEditor extends Worldbuilder {
 				//e.set_description(e_descrip);
 				//i++;
 			}
-			System.out.println("Got to end of populateCityVariables..");
+			//System.out.println("Got to end of populateCityVariables..");
 		} 
 
 	}
@@ -346,6 +352,7 @@ public class WorldEditor extends Worldbuilder {
 			}
 			catch (FileNotFoundException e) {
 				System.out.println("There was an issue opening the route file.");
+				System.out.println("Error resulting from: " + e);
 			}
 		}
 	}
@@ -399,7 +406,6 @@ public class WorldEditor extends Worldbuilder {
 					System.out.println("Cannot glean any information for this Encounter. \n");
 				}
 				else {
-					
 					populateEncounterVariables(encounter, results);
 				}
 			}
@@ -426,24 +432,199 @@ public class WorldEditor extends Worldbuilder {
 			descrip =  lines[2].split(": ")[1];
 		}
 		catch (Exception e) {
-			//
+			//System.out.println("Error resulting from: " + e);
 		}
 		encounter.set_description(descrip);
 		
-		String[] enemies = results.split("-------------------------------------------------- ");
+		ArrayList<Monster> enemy_list = new ArrayList<Monster>(); 
 		
+		String[] enemies = results.split("-------------------------------------------------- ");
 		for (int i = 1; i < enemies.length; i++) {
 			//System.out.println(enemies[i]);
 			String[] enemy_lines = enemies[i].split("\n");
 			for (String line: enemy_lines) {
 				//System.out.println(x+ ") " + line);
 				if (line.contains("Name")) {
-					encounter.add_enemy(line.split(": ")[1]);
+					Monster enemy = encounter.add_enemy(line.split(": ")[1]);
+					enemy_list.add(enemy);
+					//System.out.println("Adding: " + enemy.get_name());
 				}
 			}
 		}
+		
+		reconstructEnemies(enemy_list); 
+		
 		System.out.println(" ");
-		System.out.println(encounter.get_all_info());
+		//System.out.println(encounter.get_all_info());
+		
+	}
+	
+	/*
+	 * Creates copies of the old Monster objects, reconstructing them using the info from
+	 * their saved text files. 
+	 * 
+	 * @param 		enemy_list ArrayList<Monster> 	:list of enemies for each Encounter parsed from the Encounter file
+	 */
+	private static void reconstructEnemies(ArrayList<Monster> enemy_list) {
+		
+		for (Monster enemy: enemy_list) {
+			
+			String enemy_name = enemy.get_name(); 
+			FileSearch filesearch = new FileSearch();
+			
+			/*System.out.println("NAME: " + enemy_name +
+					"\n Encounter: " + enemy.get_encounter().get_name() +
+					//"\n Route: " + enemy.get_r_host() +
+					//"\n City: " + enemy.get_c_host().get_name() + 
+					"\n Country: " + enemy.get_country().get_country_name());
+			*/
+			String enemy_file = ""; 
+			try {
+				enemy_file = filesearch.parseFile(enemy_name, " ", enemy.get_encounter(), enemy); 
+			}
+			catch(Exception e) {
+				System.out.println("There is not yet a file for " + enemy.get_name());
+				//System.out.println("Error resulting from: " + e);
+			}
+			if (enemy_file == "") {
+				System.out.println("No information on " + enemy.get_name() + " could be gathered.");
+			}
+			else {
+				//System.out.println(enemy.get_name() + "'S File: \n" + enemy_file + "\n");
+				populateEnemyVariables(enemy, enemy_file); 
+				enemy.list_all_stats();
+			}
+			
+		}
+		
+	}
+	
+	/*
+	 * Takes the information parsed from the Monster's file and populates the new 
+	 * copy's variables with the original object's saved values.
+	 * 
+	 * @param		enemy Monster 		:the new Monster object
+	 * @param		enemy_file String	:the old Monster's text file
+	 */
+	private static void populateEnemyVariables (Monster enemy, String enemy_file) {
+		
+		String[] lines = enemy_file.split("\n"); 
+		for (String line: lines) {
+			if (line.contains("Description")) {
+				String descrip = line.split(": ")[1]; 
+				enemy.set_description(descrip);
+			}
+			if (line.contains("Level")) {
+				String lvl = line.split(": ")[1];
+				int level = Integer.parseInt(lvl);
+				enemy.set_lvl(level);
+			}
+			if (line.contains("HP")) {
+				String hp = line.split(": ")[1];
+				int HP = Integer.parseInt(hp);
+				enemy.set_hp(HP);
+			}
+			if (line.contains("AC")) {
+				String ac = line.split(": ")[1];
+				int AC = Integer.parseInt(ac);
+				enemy.set_ac(AC);
+			}
+			if (line.contains("XP")) {
+				String xp = line.split(": ")[1];
+				int XP = Integer.parseInt(xp);
+				enemy.set_xp(XP);
+			}
+			if (line.contains("Damage Die")) {
+				String dmgdie = line.split(": ")[1];
+				int dmgDie = Integer.parseInt(dmgdie);
+				enemy.set_dmgDie(dmgDie);
+			}
+			if (line.contains("Number of Damage Dice")) {
+				String numdmgdie = line.split(": ")[1];
+				int numDmgDie = Integer.parseInt(numdmgdie);
+				enemy.set_numdmgDie(numDmgDie);
+			}
+			if (line.contains("Damage Mod")) {
+				String dmgmod = line.split(": ")[1];
+				int dmgMod = Integer.parseInt(dmgmod);
+				enemy.set_dmgMod(dmgMod);
+			}
+			if (line.contains("Attack Mod")) {
+				String attackMod = line.split(": ")[1];
+				enemy.set_attackMod(attackMod);
+			}
+			if (line.contains("STR:")) {
+				String str = line.split(": ")[1];
+				int strMod = Integer.parseInt(str);
+				enemy.set_AbilityMod("STR", strMod);
+			}
+			if (line.contains("DEX:")) {
+				String dex = line.split(": ")[1];
+				int dexMod = Integer.parseInt(dex);
+				enemy.set_AbilityMod("DEX", dexMod);
+			}
+			if (line.contains("WIS:")) {
+				String wis = line.split(": ")[1];
+				int wisMod = Integer.parseInt(wis);
+				enemy.set_AbilityMod("WIS", wisMod);
+			}
+			if (line.contains("INT:")) {
+				String intl = line.split(": ")[1];
+				int intlMod = Integer.parseInt(intl);
+				enemy.set_AbilityMod("INT", intlMod);
+			}
+			if (line.contains("CON:")) {
+				String con = line.split(": ")[1];
+				int conMod = Integer.parseInt(con);
+				enemy.set_AbilityMod("CON", conMod);
+			}
+			if (line.contains("CHA:")) {
+				String cha = line.split(": ")[1];
+				int chaMod = Integer.parseInt(cha);
+				enemy.set_AbilityMod("CHA", chaMod);
+			}
+			if (line.contains("Weak to")) {
+				String list = line.split(": ")[1];
+				String[] each = list.split(",");
+				for (String item: each) {
+					item = item.replace("[", "").strip();
+					item = item.replace("]", "").strip();
+					//System.out.println(item);
+					for (DamageTypes i: DamageTypes.values()) {
+						if (item.equalsIgnoreCase(i.toString())) {
+							enemy.add_weakness(i);
+						}
+					}
+					
+				}
+			}
+			if (line.contains("Resistant to")) {
+				String list = line.split(": ")[1];
+				String[] each = list.split(",");
+				for (String item: each) {
+					item = item.replace("[", "").strip();
+					item = item.replace("]", "").strip();
+					for (DamageTypes i: DamageTypes.values()) {
+						if (item.equalsIgnoreCase(i.toString())) {
+							enemy.add_resistance(i);
+						}
+					}
+					
+				}
+			}
+		}
+		String[] inventory = enemy_file.split("------- Inventory --------")[1].split("\n");
+		for (String item: inventory) {
+			
+			if (item.contains(":")) {
+				
+				String name = item.split(":")[0].strip(); 
+				String descrip = item.split(":")[1].strip(); 
+				enemy.add_items(name, descrip);
+				
+			}
+			
+		}
 		
 	}
 	
@@ -569,6 +750,7 @@ public class WorldEditor extends Worldbuilder {
 			 }
 			 catch (Exception e) {
 				 System.out.println(MustBeIntException);
+				 System.out.println("Error resulting from: " + e);
 				 scanner.next();
 			 }
 			
@@ -647,6 +829,5 @@ public class WorldEditor extends Worldbuilder {
 		}
 		return done; 
 	}
-	
 	
 }

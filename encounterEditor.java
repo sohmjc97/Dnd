@@ -36,6 +36,8 @@ public class encounterEditor extends WorldEditor {
 			}
 			catch (Exception e) {
 				System.out.println(MustBeIntException);
+				//System.out.println("Error resulting from:  " + e);
+				scanner.next(); 
 			}
 		} while (done == false);
 	}
@@ -70,6 +72,8 @@ public class encounterEditor extends WorldEditor {
 			}
 			catch (Exception e) {
 				System.out.println(MustBeIntException);
+				//System.out.println("Error resulting from:  " + e);
+				scanner.next(); 
 			}
 		} while (done == false);
 	}
@@ -278,8 +282,9 @@ public class encounterEditor extends WorldEditor {
 				}
 			}
 			catch (Exception e) {
-				System.out.println(MustBeIntException + "\n" + e);
-				scanner.next();
+				System.out.println(MustBeIntException);
+				//System.out.println("Error resulting from:  " + e);
+				scanner.next(); 
 			}
 		} while (done == false);
 		
@@ -327,11 +332,10 @@ public class encounterEditor extends WorldEditor {
 				else {
 					System.out.println("This encounter takes place nowhere.");
 				}
+				done = switchHost(); 
 				break;
 			case 4:
 				monsterEditor.edit(); 
-				//editEnemies(); 
-				//System.out.println(m_encounter.get_enemies()); 
 				break; 
 			case 5:
 				System.out.println(m_encounter.get_all_info());
@@ -385,8 +389,9 @@ public class encounterEditor extends WorldEditor {
 				}
 			}
 			catch(Exception e) {
-				System.out.println(MustBeIntException + "\n" + e);
-				scanner.nextLine();
+				System.out.println(MustBeIntException);
+				//System.out.println("Error resulting from:  " + e);
+				scanner.next(); 
 			}
 			
 		} while (done == false);
@@ -459,7 +464,8 @@ public class encounterEditor extends WorldEditor {
 				}
 			}
 			catch (Exception e) {
-				System.out.println(OneOrZeroException + "\n" + e);
+				System.out.println(MustBeIntException);
+				//System.out.println("Error resulting from:  " + e);
 				scanner.next(); 
 			}
 			
@@ -517,8 +523,9 @@ public class encounterEditor extends WorldEditor {
 				}
 			}
 			catch(Exception e) {
-				System.out.println(OneOrZeroException + "\n" + e);
-				scanner.next();
+				System.out.println(MustBeIntException);
+				//System.out.println("Error resulting from:  " + e);
+				scanner.next(); 
 			}
 			
 		} while(done == false);
@@ -566,8 +573,9 @@ public class encounterEditor extends WorldEditor {
 				}
 			}
 			catch (Exception e) {
-				System.out.println(OneOrZeroException + "\n" + e);
-				scanner.next();
+				System.out.println(MustBeIntException);
+				//System.out.println("Error resulting from:  " + e);
+				scanner.next(); 
 			}
 		} while (done == false); 
 		return deleted; 
@@ -597,10 +605,94 @@ public class encounterEditor extends WorldEditor {
 				}
 			}
 			catch (Exception e) {
-				System.out.println(OneOrZeroException + "\n" + e);
-				scanner.next();
+				System.out.println(MustBeIntException);
+				//System.out.println("Error resulting from:  " + e);
+				scanner.next(); 
 			}
 		} while (done == false);
+	}
+	
+	private static boolean switchHost () {
+		
+		boolean switched = false;
+		boolean done = false;
+		do {
+			System.out.println("Would you like to change where this Encounter takes place? (Yes = 1/ No = 0)");
+			try {
+				int a = scanner.nextInt();
+				if (a == 1) {
+					getNewLocation();
+					switched = true; 
+					done = true; 
+				}
+				else if (a == 0) {
+					System.out.println("Location will not be changed.");
+					done = true;
+				}
+				else {
+					System.out.println(OneOrZeroException);
+				}
+			}
+			catch(Exception e) {
+				System.out.println(MustBeIntException);
+				System.out.println("Error resulting from:  " + e);
+				scanner.next(); 
+			}
+			
+		} while (done == false);
+		return switched;
+	}
+	
+	private static void getNewLocation () {
+		
+		boolean done = false;
+		do {
+			int n = 1;
+			/*System.out.println("---Cities---");
+			System.out.println("Encounter: " + m_encounter.get_name());
+			System.out.println("Country: " + m_encounter.get_country().get_country_name());
+			System.out.println("Cities: " + m_encounter.get_country().get_cities()); */
+			for (City city: m_encounter.get_country().get_cities()) {
+				System.out.println(n + ") " + city.get_name());
+				n++;
+			}
+			int m = n;
+			System.out.println("---Routes---");
+			for (Route route: m_encounter.get_country().get_routes()) {
+				System.out.println(m + ") " + route.get_name());
+				m++;
+			}
+			System.out.println("Type the number of the new location: ");
+			
+			try {
+				int a = scanner.nextInt();
+				if (a < 0) {
+					System.out.println(OutOfRangeException);
+				}
+				else if (a > m-1) {
+					System.out.println(OutOfRangeException);
+				}
+				else {
+					if (a < n) {
+						City choice = m_encounter.get_country().get_cities().get(a-1);
+						m_encounter.change_host(choice);
+					}
+					else {
+						Route choice = m_encounter.get_country().get_routes().get(m-n-1);
+						m_encounter.change_host(choice);
+					}
+					m_encounter = null; 
+					done = true; 
+				}
+			}
+			catch(Exception e) {
+				System.out.println(MustBeIntException);
+				System.out.println("Error resulting from:  " + e);
+				scanner.next(); 
+			}
+			
+		} while (done == false);
+		
 	}
 	
 }

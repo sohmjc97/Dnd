@@ -252,5 +252,11 @@ public class Route {
 		m_terrainType = tType; 
 		
 	}
+	
+    public void removeEncounter (Encounter encounter) {
+    	
+    	m_day_encounters.remove(encounter);
+    	
+    }
 
 }

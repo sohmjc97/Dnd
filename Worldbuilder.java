@@ -198,6 +198,7 @@ public class Worldbuilder {
 				}
 				catch(Exception e) {
 					System.out.println(GenericException);
+					System.out.println("Error resulting from: " + e);
 					scanner.next();
 				}
 			}while(done==false);
@@ -245,6 +246,7 @@ public class Worldbuilder {
 			}
 			catch (Exception e) {
 				System.out.println(GenericException);
+				//System.out.println("Error resulting from: " + e);
 				scanner.next();
 			}
 		}while (done == false); 
@@ -291,6 +293,7 @@ public class Worldbuilder {
 			}
 			catch (Exception e) {
 				System.out.println(GenericException);
+				//System.out.println("Error resulting from: " + e);
 				scanner.next();
 			}
 		}while (done == false); 
@@ -321,6 +324,7 @@ public class Worldbuilder {
 			}
 			catch (Exception e) {
 				System.out.println(MustBeIntException);
+				//System.out.println("Error resulting from: " + e);
 				scanner.next();
 			}
 		} while (done == false);
@@ -366,6 +370,7 @@ public class Worldbuilder {
 			}
 			catch(Exception e) {
 				System.out.println(MustBeIntException);
+				//System.out.println("Error resulting from: " + e);
 				scanner.next();
 			}
 		}while(done==false);
@@ -388,6 +393,7 @@ public class Worldbuilder {
 			}
 			catch(Exception e) {
 				System.out.println(GenericException);
+				//System.out.println("Error resulting from: " + e);
 				scanner.next(); 
 			}
 		} while (done == false);
@@ -425,6 +431,7 @@ public class Worldbuilder {
 			}
 			catch (Exception e) {
 				System.out.println(MustBeIntException);
+				//System.out.println("Error resulting from: " + e);
 				scanner.next();
 			}
 		} while (done == false);
@@ -455,6 +462,7 @@ public class Worldbuilder {
 			}
 			catch (Exception e) {
 				System.out.println(MustBeIntException);
+				//System.out.println("Error resulting from: " + e);
 				scanner.next();
 			}
 		} while (valid_age == false);
@@ -479,6 +487,7 @@ public class Worldbuilder {
 			}
 			catch (Exception e) {
 				System.out.println(MustBeIntException);
+				//System.out.println("Error resulting from: " + e);
 				scanner.next();
 			}
 		} while (valid_pop == false);
@@ -515,6 +524,7 @@ public class Worldbuilder {
 			}
 			catch (Exception e) {
 				System.out.println(OneOrZeroException);
+				//System.out.println("Error resulting from: " + e);
 				scanner.next(); 
 			}
 		} while(done == false);
@@ -537,7 +547,7 @@ public class Worldbuilder {
 					countryCreator(); 
 					done = true;
 				}
-				else if (a==0) {
+				else if (a == 0) {
 					System.out.println("Okay. Ending Worldbulder...");
 					scanner.close(); 
 					done = true;
@@ -548,6 +558,7 @@ public class Worldbuilder {
 			}
 			catch (Exception e) {
 				System.out.println(OneOrZeroException);
+				//System.out.println("Error resulting from: " + e);
 				scanner.next();
 			}
 		} while (done == false);
@@ -585,6 +596,7 @@ public class Worldbuilder {
 			}
 			catch (Exception e) {
 				System.out.println(OneOrZeroException);
+				//System.out.println("Error resulting from: " + e);
 				scanner.next();
 			}
 		} while (done == false);
@@ -666,6 +678,7 @@ public class Worldbuilder {
 			}
 			catch (Exception e) {
 				System.out.println(OneOrZeroException + e);
+				//System.out.println("Error resulting from: " + e);
 				scanner.next(); 
 			}
 		} while(done == false);
@@ -736,6 +749,7 @@ public class Worldbuilder {
 			}
 			catch (Exception e) {
 				System.out.println(GenericException);
+				System.out.println("Error resulting from: " + e);
 				scanner.next();
 			}
 		} while (done == false);
@@ -783,6 +797,7 @@ public class Worldbuilder {
 			}
 			catch (Exception e) {
 				System.out.println(MustBeIntException);
+				//System.out.println("Error resulting from: " + e);
 				scanner.next(); 
 			}
 		} while (done == false);	
@@ -826,6 +841,7 @@ public class Worldbuilder {
 			}
 			catch(Exception e) {
 				System.out.println(MustBeIntException);
+				//System.out.println("Error resulting from: " + e);
 				scanner.next();
 			}
 		}while(done==false);
@@ -851,6 +867,7 @@ public class Worldbuilder {
 			}
 			catch (Exception e) {
 				System.out.println(MustBeIntException);
+				//System.out.println("Error resulting from: " + e);
 				scanner.next();
 			}
 		} while (done == false);
@@ -875,6 +892,7 @@ public class Worldbuilder {
 			}
 			catch (Exception e) {
 				System.out.println(MustBeIntException);
+				//System.out.println("Error resulting from: " + e);
 				scanner.next();
 			}
 		} while (done == false);
@@ -912,6 +930,7 @@ public class Worldbuilder {
 			}
 				catch (Exception e) {
 					System.out.println(OneOrZeroException);
+					//System.out.println("Error resulting from: " + e);
 					scanner.next();
 				}
 		} while (done == false);
@@ -978,6 +997,7 @@ public class Worldbuilder {
 				}
 				catch (Exception e) {
 					System.out.println(MustBeIntException);
+					//System.out.println("Error resulting from: " + e);
 					scanner.next();
 				}
 			} while (done == false);
@@ -1015,6 +1035,7 @@ public class Worldbuilder {
 			}
 			catch (Exception e) {
 				System.out.println(GenericException);
+				System.out.println("Error resulting from: " + e);
 				scanner.next();
 			}
 		} while (done == false);
@@ -1061,6 +1082,7 @@ public class Worldbuilder {
 			}
 			catch (Exception e) {
 				System.out.println(GenericException);
+				System.out.println("Error resulting from: " + e);
 				scanner.next();
 			}
 		} while (done == false);

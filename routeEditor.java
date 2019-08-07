@@ -31,7 +31,9 @@ public class routeEditor extends WorldEditor {
 				}
 			}
 			catch (Exception e) {
-				System.out.println(MustBeIntException + "\n" + e);
+				System.out.println(MustBeIntException);
+				//System.out.println("Error resulting from:  " + e);
+				scanner.next(); 
 			}
 		} while (done == false);
 	}
@@ -151,6 +153,8 @@ public class routeEditor extends WorldEditor {
 			}
 			catch (Exception e) {
 				System.out.println(MustBeIntException);
+				//System.out.println("Error resulting from:  " + e);
+				scanner.next(); 
 			}
 		} while (done == false);
 	}
@@ -254,7 +258,9 @@ public class routeEditor extends WorldEditor {
 				}
 			}
 			catch (Exception e) {
-				System.out.println(GenericException);
+				System.out.println(MustBeIntException);
+				//System.out.println("Error resulting from:  " + e);
+				scanner.next(); 
 			}
 		}while (done == false);
 	}
@@ -286,7 +292,9 @@ public class routeEditor extends WorldEditor {
 				}
 			}
 			catch (Exception e) {
-				System.out.println(OneOrZeroException);
+				System.out.println(MustBeIntException);
+				//System.out.println("Error resulting from:  " + e);
+				scanner.next(); 
 			}
 		} while (done == false);
 		return done; 
