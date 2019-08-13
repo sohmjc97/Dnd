@@ -12,11 +12,11 @@ public class Main {
 		do {
 			try {
 				System.out.println("Welcomee to the DM Control Room!");
-				System.out.println("Would you like to 1) Edit an Old World or 2) Create a new ome?");
+				System.out.println("Would you like to 1) Edit an Old World, 2) Create a new World, or 3) Run an e World?");
 				int a = scanner.nextInt();
 				
 				if (a == 1) {
-					WorldEditor.edit(); 
+					WorldEditor.edit(false); 
 					done = true;
 				}
 				else if (a == 2) {
@@ -28,6 +28,9 @@ public class Main {
 					System.out.println("Total Cities: " + Worldbuilder.get_global_city_list());
 					System.out.println("Total # of routes: " + Route.get_route_count());
 					done = true;
+				}
+				else if (a == 3) {
+					WorldEditor.edit(true); 
 				}
 				else {
 					System.out.println("Answer must be 1 oe 2. Try again.");

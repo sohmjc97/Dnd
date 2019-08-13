@@ -21,9 +21,14 @@ public class WorldEditor extends Worldbuilder {
 	 * If the file and directory are successfully opened, the main menu (giving the user
 	 * options for editing the Country) will be displayed. 
 	 */
-	public static void edit () {
+	public static void edit (boolean play) {
 		m_country = open_country_file(); 
-		runMainMenu(); 
+		if (play) {
+			GameRunner.play(); 
+		}
+		else {
+			runMainMenu(); 
+		}
 	}
 	
 	/*
@@ -41,8 +46,8 @@ public class WorldEditor extends Worldbuilder {
 		do {
 			try {
 				
-				System.out.println("Welcome to World Editor!");
-				System.out.println("Type the name of the country you want to edit. Be sure to spell it correctly.");
+				System.out.println("Opening up the Old Worlds...");
+				System.out.println("Type the name of the country you want to open. Be sure to spell it correctly.");
 				String country_name = scanner.nextLine(); 
 				
 				try {
@@ -524,7 +529,7 @@ public class WorldEditor extends Worldbuilder {
 	 * 
 	 * @param 		enemy_list ArrayList<Monster> 	:list of enemies for each Encounter parsed from the Encounter file
 	 */
-	private static void reconstructEnemies(ArrayList<Monster> enemy_list) {
+	protected static void reconstructEnemies(ArrayList<Monster> enemy_list) {
 		
 		for (Monster enemy: enemy_list) {
 			

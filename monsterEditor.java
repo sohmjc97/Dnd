@@ -104,7 +104,7 @@ public class monsterEditor extends encounterEditor{
 				if (a < 1) {
 					System.out.println(OutOfRangeException);
 				}
-				else if (a > 9) {
+				else if (a > 10) {
 					System.out.println(OutOfRangeException);
 				}
 				else {
@@ -134,7 +134,8 @@ public class monsterEditor extends encounterEditor{
 		output = output + "6) View Enemy Details \n";
 		output = output + "7) Delete Enemy \n";
 		output = output + "8) Save Enemy \n";
-		output = output + "9) Return to Enemy Selection \n";
+		output = output + "9) Create Copies \n";
+		output = output + "10) Return to Enemy Selection \n";
 		System.out.println(output); 
 	}
 	
@@ -178,6 +179,9 @@ public class monsterEditor extends encounterEditor{
 			saveEnemy();
 			break;
 		case 9:
+			copyMonster(); 
+			break;
+		case 10:
 			System.out.println("Returning to Enemy Selection...");
 			done = true;
 			break; 
@@ -1186,5 +1190,54 @@ public class monsterEditor extends encounterEditor{
 		
 		return removed; 
 	}
+	
+	/*
+	 * This is great for when you want to make a bunch of the same type of enemy. Get the original in the state you want
+	 * to make the copies, then save it and use this option with however many of the copies you want, noting that the original wil remain as well.
+	 * The copies will be distinct object that is a perfect copy of the original, made from its text file. You can then edit each one as you
+	 * like to give them differences, and it will not affect any of the other copies or the original. You can also change the original after
+	 * making the copies, and it will not affect them, since they are now distinct objects.
+	 */
+	private static void copyMonster () {
+		
+		boolean done = false; 
+		do {
+			System.out.println("How many copies do you want to make of this Monster? Enter 0 if you don't want to make a copy.");
+			try {
+				int a = scanner.nextInt();
+				if (a == 0) {
+					System.out.println("No copies will be made.");
+				}
+				else if (a < 0 | a > 20) {
+					System.out.println(OutOfRangeException);
+				}
+				else {
+					int count = 0;
+					
+					ArrayList<Monster> copies = new ArrayList<Monster>();
+					while (count < a) {
+						Monster copy = new Monster(m_enemy.get_name(), m_enemy.get_encounter());
+					
+						copies.add(copy);
+						count++;
+					}
+					reconstructEnemies(copies); 
+					int i = 2;
+					for (Monster m: copies) {
+						m.set_name(m_enemy.get_name() + i);
+						m_encounter.append_enemy(m);
+						i++;
+					}
+					done = true;
+				}
+			}
+			catch (Exception e) {
+				System.out.println(MustBeIntException + "\n" +
+						"Error Resulting from: " + e);
+				scanner.next();
+			}
+		} while (done == false);
+		
+	} 
 	
 }
