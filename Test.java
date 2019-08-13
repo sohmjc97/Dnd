@@ -89,8 +89,8 @@ public static void main(String[] args) {
 		*/
 		
 		//FileReader reader = new FileReader("Greg.txt");
-		FileCreator sheet = new FileCreator(shinah);
-		FileCreator citysheet = new FileCreator(atlantis);
+		//FileCreator sheet = new FileCreator(shinah);
+		//FileCreator citysheet = new FileCreator(atlantis);
 
 	}
 	

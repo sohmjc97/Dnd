@@ -4,6 +4,7 @@ import java.util.*;
 
 import Dnd.Country.CityType;
 import Dnd.Country.TerrainType;
+import Dnd.Encounter.EncounterType;
 
 public class City {
 	/*
@@ -27,7 +28,9 @@ public class City {
     
     ArrayList<String> m_buildings = new ArrayList<String>();
     
-    ArrayList<Encounter> m_encounters = new ArrayList<Encounter>(); 
+    ArrayList<Encounter> m_day_encounters = new ArrayList<Encounter>(); 
+    ArrayList<Encounter> m_night_encounters = new ArrayList<Encounter>(); 
+    ArrayList<Encounter> m_all_encounters = new ArrayList<Encounter>(); 
     ArrayList<Route> m_routesList = new ArrayList<Route>(); 
 	
     
@@ -210,6 +213,16 @@ public class City {
                 
         }
     }
+    
+	public void autoSave () {
+		try {
+			FileCreator newfile = new FileCreator(this); 
+		}
+		catch(Exception e) {
+			System.out.println("There was problem with the Autosave.");
+		}
+		
+	}
     
     ///////////////////////////////////////////////
     // Setters and Getters                       //
@@ -497,35 +510,81 @@ public class City {
 	 * @param	city City		:The city to which this encounter belongs
 	 * @param	name String		:What this encounter is to be called 
 	 */
-	public Encounter add_encounters (City city, String name) {
+	public Encounter add_encounters (City city, String name, EncounterType eType) {
 		
-		Encounter encounter = new Encounter(city, name);
-		m_encounters.add(encounter);
+		Encounter encounter = new Encounter(city, name, eType);
+		if (eType == EncounterType.DAY) {
+			m_day_encounters.add(encounter);
+		}
+		else {
+			m_night_encounters.add(encounter);
+		}
+		m_all_encounters.add(encounter);
 		return encounter; 
 		
 	}
 	
 	/*
-	 * Returns the City's list od encounters 
+	 * Returns the City's list of day encounters 
 	 * 
 	 * @return 		m_encounters ArrayList<Encounter> 		:the encounters belonging to this City
 	 */
-	public ArrayList<Encounter> get_encounters() {
+	public ArrayList<Encounter> get_day_encounters() {
 		
-		return m_encounters; 
+		return m_day_encounters; 
+		
+	}
+	
+	public ArrayList<Encounter> get_night_encounters() {
+		
+		return m_night_encounters; 
 		
 	}
 	
 	/*
 	 * Prints a list of the City's Encounters
 	 */
-	public void list_encounters () {
+	public void list_day_encounters () {
 		
 		int n = 1;
-		for (Encounter i: m_encounters) {
+		for (Encounter i: m_day_encounters) {
 			System.out.println(n + ") " + i.get_name() + ": " + i.get_description());
 			n++; 
 		}
+		
+	}
+	
+	/*
+	 * Prints a list of the City's Night Encounters
+	 */
+	public void list_night_encounters () {
+		
+		int n = 1;
+		for (Encounter i: m_night_encounters) {
+			System.out.println(n + ") " + i.get_name() + ": " + i.get_description());
+			n++; 
+		}
+		
+	}
+	
+	/*
+	 * Returns a list of all encounters, both Day and Night Encounters 
+	 */
+	public ArrayList<Encounter> get_all_encounters () {
+		
+		return m_all_encounters; 
+		
+	}
+	
+	/*
+	 * Lists all Encounters, both Day and Night Encounters 
+	 */
+	public void list_all_encounters () {
+		
+		System.out.println("---Day Encouunters ---");
+		list_day_encounters();
+		System.out.println("---Night Encounters ---");
+		list_night_encounters(); 
 		
 	}
 	
@@ -752,9 +811,46 @@ public class City {
         
     }
     
+    /*
+     * Removes an Encounter from the City without deleting it 
+     * 
+     * @param	encounter Encounter 	:the Encounter that should be removed 
+     */
     public void removeEncounter (Encounter encounter) {
     	
-    	m_encounters.remove(encounter);
+    	m_all_encounters.remove(encounter);
+    	m_day_encounters.remove(encounter);
+    	m_night_encounters.remove(encounter);
+    	
+    }
+    
+    /*
+     * Removes an Encounter from the City, then deletes it. 
+     *   
+     * @param	encounter Encounter 	:the Encounter that should be deleted 
+     */
+    public void deleteEncounter (Encounter encounter) {
+    	
+    	this.removeEncounter(encounter);
+    	encounter = null; 
+    	
+    }
+    
+    /*
+     * Adds an existing Encounter to the City
+     * 
+     * @param	encounter Encounter		:the Encounter that should be appended to the City
+     */
+    public void append_encounter (Encounter encounter) {
+    	
+    	m_all_encounters.add(encounter);
+    	if (encounter.get_encounterType() == EncounterType.DAY) {
+    		m_day_encounters.add(encounter);
+    	}
+    	else {
+    		m_night_encounters.add(encounter);
+    	}
+    	encounter.m_city = this; 
     	
     }
     
@@ -797,16 +893,29 @@ public class City {
 		}
 		        
 		output = output + "-------------------------------------------------- \n Encounters: \n";
-		if (m_encounters.isEmpty()) {
-			output = output + "No encounters to mention. \n";
+		/*if (m_day_encounters.isEmpty()) {
+			output = output + "No day encounters to mention. \n";
 		}
-		else {
+		else {*/
 			int n = 1;
-			for (Encounter i: m_encounters) {
+			output = output + "(Day Encounters) \n";
+			for (Encounter i: m_day_encounters) {
 				output = output + n + ") " + i.get_name() + "\n";
 				n++;
 			}
-		} 
+		//} 
+		
+		/*if (m_night_encounters.isEmpty()) {
+			output = output + "No night encounters to mention. \n";
+		}
+		else {*/
+			int k = 1;
+			output = output + "(Night Encounters) \n";
+			for (Encounter i: m_night_encounters) {
+				output = output + k + ") " + i.get_name() + "\n";
+				k++;
+			}
+		//} 
 		output = output + "-------------------------------------------------- \n";
 		
 		output = output + "Buildings: " + "\n";
@@ -853,7 +962,7 @@ public class City {
         System.out.println("------------------------------------");
         System.out.println("Encounters: ");
         
-        list_encounters(); 
+        list_all_encounters(); 
         
         System.out.println("------------------------------------");
         

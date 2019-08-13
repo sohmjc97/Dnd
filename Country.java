@@ -42,9 +42,10 @@ public class Country {
     
     /*
      * Data structures for holding coordiniate ingo for implementing a map, currently not implemented
-     */
+     
     private static HashMap<String, Integer[]> m_city_coords = new HashMap<String, Integer[]>();
     private static HashMap<String,String> m_map_key = new HashMap<String,String>(); 
+    */
     
     /*
      * Holds the Country and Route objects that belong to each particular country
@@ -69,6 +70,15 @@ public class Country {
         set_country_name(name);
         
     }
+    
+    /*
+     * Saves the country to a text file with descending directories of Routes and Cities 
+     */
+	public void autoSave () {
+		
+		FileCreator newfile = new FileCreator(this); 
+		
+	}
     
 	///////////////////////////////////////////
 	// Set & Get                             //

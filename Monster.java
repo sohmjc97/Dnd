@@ -7,9 +7,9 @@ public class Monster extends Being{
 	 * A class of being that will represent enemies to the PC's 
 	 */
 	
-	private Encounter m_encounter = null; 
-	private Route m_r_host = null;
-	private City m_c_host = null; 
+	Encounter m_encounter = null; 
+	Route m_r_host = null;
+	City m_c_host = null; 
 	private Country m_country = null; 
 	
 	/*
@@ -509,10 +509,23 @@ public class Monster extends Being{
 	 * 
 	 * @return 		m_ItemDrop HashMap<String, String>		:the HashMap of item names & descriptions
 	 */
-	public HashMap<String, String> get_items () {
+	public HashMap<String, String> get_items_w_descrip () {
 
 	    return m_ItemDrop;
 
+	}
+	
+	/*
+	 * Returns an ArrayList containing the names of the items in the Monster's inventory
+	 */
+	public ArrayList<String> get_item_names () {
+		
+		ArrayList<String> i_names = new ArrayList<String>();
+		for (String name: m_ItemDrop.keySet()) {
+			i_names.add(name);
+		}
+		return i_names;
+		
 	}
 	
 	/* 
@@ -871,9 +884,43 @@ public class Monster extends Being{
 	    }
 	}
 	
+	/*
+	 * This function allows this Monster to be moved from the Encounter it currently 
+	 * belongs with to a different Encounter. To make this change permanent,
+	 * be sure to save the old Encounter, the new Encounter, and the Monster itself
+	 * after making the switch.
+	 * 
+	 * @param		newEncounter Encounter 		:the Encounter you want to move the Monster to
+	 */
+	public void switchEncounter (Encounter newEncounter, Monster enemy) {
+		
+		//System.out.println("Removing " + enemy.get_name() + " from " + oldEncounter.get_name());
+		m_encounter.remove_enemy(this);
+		m_encounter.autoSave();
+		//System.out.println(oldEncounter.get_enemies());
+		System.out.println("The current encounter is " + m_encounter.get_name());
+		newEncounter.append_enemy(this);
+		m_encounter = newEncounter;
+		System.out.println("The new encounter is now " + m_encounter.get_name());
+		m_encounter.autoSave();
+		enemy.autoSave();
+		//System.out.println(newEncounter.get_enemies());
+		
+	}
+	
 	//////////////////////////
 	// Actions				//
 	//////////////////////////
+	
+	/*
+	 * Saves this Monster as is to a file in the directory of its given Encounter
+	 * and Host Location
+	 */
+	public void autoSave () {
+		
+		FileCreator newfile = new FileCreator(this); 
+		
+	}
 	
 	/*
 	 * Makes a roll of the size of die given. The result will be between 1 and the number given. Prints

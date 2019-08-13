@@ -55,6 +55,7 @@ public class Main {
 		catch (NullPointerException e) {
 			System.out.println("No Route was active, so no info could be returned.");
 		}
+		scanner.close();
 	}
 
 }

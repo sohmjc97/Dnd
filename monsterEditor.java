@@ -17,7 +17,7 @@ public class monsterEditor extends encounterEditor{
 	public static void edit () {
 			
 		System.out.println("----- Enemy Editor -----");
-		System.out.println("Which Enemy would you like to edit?");
+		//System.out.println("Which Enemy would you like to edit?");
 		
 		boolean done = false;
 		do {
@@ -55,27 +55,11 @@ public class monsterEditor extends encounterEditor{
 		
 		output = output + "1) " + "Return to Encounter Editor \n";
 		output = output + "2) " + "Add new Enemy \n";
-		if (enemyCount >= 1) {
-			output = output + "3) " + m_encounter.get_enemies().get(0).get_name() +"\n";
+		
+		for (int i = 0; i< enemyCount; i++) {
+			output = output + (i+3) + ") " + m_encounter.get_enemies().get(i).get_name() + "\n"; 
 		}
-		if (enemyCount >= 2) {
-			output = output + "4) " + m_encounter.get_enemies().get(1).get_name()+ "\n";
-		}
-		if (enemyCount >= 3) {
-			output = output + "5) " + m_encounter.get_enemies().get(2).get_name() + "\n";
-		}
-		if (enemyCount >= 4) {
-			output = output + "6) " + m_encounter.get_enemies().get(3).get_name() + "\n";
-		}
-		if (enemyCount >= 5) {
-			output = output + "7) " + m_encounter.get_enemies().get(4).get_name() + "\n";
-		}
-		if (enemyCount >= 6) {
-			output = output + "8) " + m_encounter.get_enemies().get(5).get_name() + "\n";
-		}
-		/*
-		 * Add additional lines if you plan on having an Encounter with more than 6 enemies 
-		 */
+			
 		System.out.println(output);  
 		
 	}
@@ -87,45 +71,23 @@ public class monsterEditor extends encounterEditor{
 	private static boolean parseEnemyChoices (int choice) {
 		
 		boolean done = false;
-		switch (choice) {
-		
-		case 1:
+		if (choice == 1) {
 			System.out.println("Returning to Encounter Editor...");
 			done = true;
-			break;
-		case 2:
+		}
+		else if (choice == 2) {
 			scanner.nextLine();
 			System.out.println("What should the new enemy be called?");
 			String name = scanner.nextLine();
 			m_enemy = m_encounter.add_enemy(name);
-			break;
-		case 3:
-			m_enemy = m_encounter.get_enemies().get(0);
+			m_enemy.autoSave();
+		}
+		else {
+			m_enemy = m_encounter.get_enemies().get(choice - 3);
 			getEnemyEdits(); 
-			break;
-		case 4:
-			m_enemy = m_encounter.get_enemies().get(1);
-			getEnemyEdits(); 
-			break;
-		case 5:
-			m_enemy = m_encounter.get_enemies().get(2);
-			getEnemyEdits(); 
-			break;
-		case 6:
-			m_enemy = m_encounter.get_enemies().get(3);
-			getEnemyEdits(); 
-			break;
-		case 7:
-			m_enemy = m_encounter.get_enemies().get(4);
-			getEnemyEdits(); 
-			break;
-		case 8:
-			m_enemy = m_encounter.get_enemies().get(5);
-			getEnemyEdits(); 
-			break;
 		}
 		return done; 
-		
+	
 	}
 	
 	/*
@@ -195,8 +157,10 @@ public class monsterEditor extends encounterEditor{
 			m_enemy.set_description(descrip);
 			System.out.println("The new description has been set to :");
 			System.out.println(m_enemy.get_description());
+			break;
 		case 3:
 			System.out.println("This enemy belongs to the " + m_encounter.get_name() + " encoutner.");
+			done = switchHost(); 
 			break;
 		case 4:
 			parseEnemyStats();
@@ -224,6 +188,218 @@ public class monsterEditor extends encounterEditor{
 	}
 	
 	/*
+	 * Gets user input as to whether this Monster should be moved to a new Encounter.
+	 * If so,  gets User input as to which Encounter it should ve moved to and
+	 * executes the switch.
+	 */
+	private static boolean switchHost() {
+		
+		boolean switched = false;
+		boolean done = false;
+		do {
+			System.out.println("Would you like to change the Encouner this enemy belongs to? (Yes = 1/ No = 0)");
+			try {
+				int a = scanner.nextInt();
+				if (a == 1) {
+					getNewLocation();
+					switched = true; 
+					done = true; 
+				}
+				else if (a == 0) {
+					System.out.println("The enemy will remain in this Encounter.");
+					done = true;
+				}
+				else {
+					System.out.println(OneOrZeroException);
+				}
+			}
+			catch(Exception e) {
+				System.out.println(MustBeIntException);
+				//System.out.println("Error resulting from:  " + e);
+				scanner.next(); 
+			}
+			
+		} while (done == false);
+		return switched;
+	}
+	
+	/*
+	 * Gets user input as to which Host Location in which to find a new Encounter
+	 * for the Monster
+	 */
+	private static void getNewLocation () {
+		
+		boolean done = false;
+		do {
+			int n = 1;
+			System.out.println("---City Encounters---");
+			/*System.out.println("Encounter: " + m_encounter.get_name());
+			System.out.println("Country: " + m_encounter.get_country().get_country_name());
+			System.out.println("Cities: " + m_encounter.get_country().get_cities()); */
+			for (City city: m_encounter.get_country().get_cities()) {
+				String encounters = " :: ";
+				for (Encounter e: city.get_all_encounters()) {
+					encounters = encounters + e.get_name() + " :: ";
+				}
+				System.out.println(n + ") " + city.get_name() + encounters);
+				n++;
+			}
+			int m = n;
+			System.out.println("---Routes---");
+			for (Route route: m_encounter.get_country().get_routes()) {
+				String encounters = " :: ";
+				for (Encounter e: route.get_all_encounters()) {
+					encounters = encounters + e.get_name() + " :: ";
+				}
+				System.out.println(m + ") " + route.get_name() + encounters);
+				m++;
+			}
+			if (m == n) {
+				m++;
+			}
+			System.out.println("Type the number of the new location: ");
+			
+			try {
+				int a = scanner.nextInt();
+				if (a < 0) {
+					System.out.println(OutOfRangeException);
+				}
+				else if (a > m - 1) {
+					System.out.println(OutOfRangeException);
+				}
+				else {
+					boolean changed = false;
+					if (a < n - 1) {
+						City choice = m_encounter.get_country().get_cities().get(a-1);
+						changed = getNewEncounter(choice);
+					}
+					else {
+						Route choice = m_encounter.get_country().get_routes().get(m-a-1);
+						changed = getNewEncounter(choice); 
+					}
+					//m_encounter = null; 
+					done = changed; 
+				}
+			}
+			catch(Exception e) {
+				System.out.println(MustBeIntException);
+				System.out.println("Error resulting from:  " + e);
+				scanner.next(); 
+			}
+			
+		} while (done == false);
+		
+	}
+	
+	/*
+	 * Lists the City Encounters for the chosen Host Location and gets user input s to which
+	 * one the Monster should be moved to. 
+	 */
+	private static boolean getNewEncounter (City choice) {
+		
+		boolean changed = false; 
+		boolean done = false;
+		do {
+			int n = 1;
+			System.out.println("<<<" + choice.get_name() + ">>>");
+			for (Encounter e: choice.get_all_encounters()) {
+				System.out.println(n + ") " + e.get_name());
+				n++;
+			}
+			if (n == 1) {
+				System.out.println("There are no encounters in this location.");
+				done = true;
+				continue; }
+			else {
+				System.out.println("Type the number of the new Encounter:");
+				try {
+					int a = scanner.nextInt();
+					if (a < 1) {
+						System.out.println(OutOfRangeException);
+					}
+					else if (a > choice.get_all_encounters().size()) {
+						System.out.println(OutOfRangeException);
+					}
+					else {
+						//System.out.println(choice.get_all_encounters()); 
+						Encounter newEncounter = choice.get_all_encounters().get(a - 1);
+						System.out.println("You have chosen " + newEncounter.get_name());
+						for (Monster m: newEncounter.get_enemies()) {
+							if (m.get_name() == m_enemy.get_name()) {
+								System.out.println(newEncounter.get_name() + " already has this enemy. Nothing was changed.");
+								continue;
+							}
+						}
+						m_enemy.switchEncounter(newEncounter, m_enemy);
+						//System.out.println("New encounter is still " + m_enemy.get_encounter().get_name());
+						changed = true;
+						done = true; 
+					}
+				}
+				catch(Exception e) {
+					System.out.println(MustBeIntException);
+					System.out.println("Error resulting from:  " + e);
+					scanner.next(); 
+				}
+			}
+			
+		} while (done == false);
+		return changed; 
+		
+	}
+	
+	/*
+	 * Lists the Route Encounters for the chosen Host Location and gets user input s to which
+	 * one the Monster should be moved to. 
+	 */
+	private static boolean getNewEncounter (Route choice) {
+		
+		boolean changed = false; 
+		boolean done = false;
+		do {
+			int n = 1;
+			System.out.println("<<<" + choice.get_name() + ">>>");
+			for (Encounter e: choice.get_all_encounters()) {
+				System.out.println(n + ") " + e.get_name());
+				n++;
+			}
+			if (n == 1) {
+				System.out.println("There are no encounters in this location.");
+				done = true;
+				continue;
+			}
+			else {
+				System.out.println("Type the number of the new Encounter:");
+				try {
+					int a = scanner.nextInt();
+					if (a < 1) {
+						System.out.println(OutOfRangeException);
+					}
+					else if (a > choice.get_day_encounters().size() + 1) {
+						System.out.println(OutOfRangeException);
+					}
+					else {
+						System.out.println(choice.get_all_encounters()); 
+						Encounter newEncounter = choice.get_all_encounters().get(a - 1);
+						System.out.println(newEncounter.get_name());
+						m_enemy.switchEncounter(newEncounter, m_enemy);
+						System.out.println("New encounter is still " + m_enemy.get_encounter().get_name());
+						changed = true; 
+						done = true; 
+					}
+				}
+				catch(Exception e) {
+					System.out.println("Error resulting from:  " + e);
+					System.out.println(MustBeIntException);
+					scanner.next(); 
+				}
+			}
+		} while (done == false);
+		return changed;
+		
+	}
+	
+	/*
 	 * List the options for modifying Monster's stats
 	 */
 	private static void listEnemyStats() {
@@ -241,8 +417,8 @@ public class monsterEditor extends encounterEditor{
 		for (String i: m_enemy.m_abilityMods.keySet()) {
 			output = output + i + ": " + m_enemy.m_abilityMods.get(i) + "\n";
 		}
-		output = output + "10) Weaknesses \n";
-		output = output + "11) Resistances \n";
+		output = output + "10) Weaknesses" + m_enemy.get_weaknesses() + "\n";
+		output = output + "11) Resistances" + m_enemy.get_resistances() + "\n";
 		output = output + "12) Return to Previous Menu \n";
 
 		System.out.println(output);
@@ -642,189 +818,6 @@ public class monsterEditor extends encounterEditor{
 	}
 	
 	/*
-	 * Gets User input on what items to add to the Monster's inventory and what items to delete
-	 * from the Monster's inventory. 
-	 */
-	private static void editItems() {
-		
-		boolean done = false;
-		do {
-			
-			System.out.println("Do you want to add any items? (Yes = 1/ No = 0)");
-			try {
-				int a = scanner.nextInt();
-				if (a == 1) {
-					scanner.nextLine();
-					System.out.println("Name the Item: ");
-					String name = scanner.nextLine();
-					System.out.println("Describe the Item: ");
-					String descrip = scanner.nextLine();
-					m_enemy.add_items(name, descrip);
-					System.out.println(name + " was successfully added to " + m_enemy.get_name() + "'s inventory.");
-				}
-				else if (a == 0) {
-					System.out.println("No further items will be added.");
-					done = true; 
-				}
-				else {
-					System.out.println(OneOrZeroException);
-				}
-			}
-			catch(Exception e) {
-				System.out.println(OneOrZeroException);
-				//System.out.println("Error resulting from:  " + e);
-				scanner.next();
-			}
-			
-		} while (done == false);
-		
-		deleteItems();
-	}
-	
-	/*
-	 * Internal function of editItems that verifies and deletes items that the User
-	 * no longer wants in this Monster's inventory. 
-	 */
-	private static void deleteItems() {
-		
-		boolean done = false; 
-		do {
-			
-			if (m_enemy.get_items().isEmpty()) {
-				done = true;
-				System.out.println(m_enemy.get_name() + "'s inventory is empty.");
-				continue; 
-			}
-			
-			ArrayList<String> items = new ArrayList<String>(); 
-			System.out.println("Do you want to delete any items? (Yes = 1/ No = 0)");
-			try {
-				int a = scanner.nextInt();
-				if (a == 1) {
-					int i = 1;
-					for (String item: m_enemy.m_ItemDrop.keySet()) {
-						System.out.println(i + ") " + item);
-						items.add(item);
-						i++; 
-					}
-					
-					System.out.println("Type the number of the item you wish to delete: ");
-					
-					try {
-						
-						int n = scanner.nextInt(); 
-						if (n < 1) {
-							System.out.println(OutOfRangeException);
-						}
-	
-						else if (n > items.size()) {
-							System.out.println(OutOfRangeException);
-						}
-						else {
-							String thing = items.get(n-1);
-							m_enemy.get_items().remove(thing);
-							System.out.println(thing + " was successfully deleted.");
-						}
-					}
-					catch (Exception e) {
-							//
-					}
-				}
-				else if (a == 0) {
-					System.out.println("No further items will be deleted.");
-					done = true; 
-				}
-				else {
-					System.out.println(OneOrZeroException);
-				}
-			}
-			catch (Exception e) {
-				System.out.println(OutOfRangeException);
-				//System.out.println("Error resulting from:  " + e);
-				scanner.next();
-			}
-			
-		} while (done == false);
-		
-	}
-	
-	/*
-	 * Verifies that the User wants to save this Monster to a file.
-	 * If so, a new text file will be created and saved with the Monster's information. 
-	 */
-	private static void saveEnemy() {
-		
-		boolean done = false; 
-		do {
-			
-			System.out.println("Do you want to save " + m_enemy.get_name() + " to a file? (Yes = 1/ No = 0)");
-			try {
-				int a = scanner.nextInt();
-				if (a == 1) {
-					FileCreator enemyFile = new FileCreator(m_enemy);
-					System.out.println(m_enemy.get_name() + " was successfully saved.");
-					done = true; 
-				}
-				else if (a == 0) {
-					System.out.println(m_enemy.get_name() + " will not be saved.");
-					done = true; 
-				}
-				else {
-					System.out.println(OneOrZeroException);
-				}
-			}
-			catch (Exception e) {
-				System.out.println(OneOrZeroException);
-				//System.out.println("Error resulting from:  " + e);
-				scanner.next();
-			}
-		} while (done == false);
-		
-	}
-	
-	/*
-	 * Verifies that the User wants to delete this Monster object. 
-	 * If so, the Monster will be removed from its Encounter and deleted. 
-	 * 
-	 * @return		boolean		:true if Monster is deleted, false otherwise. 
-	 */
-	private static boolean deleteEnemy() {
-		boolean removed = false;
-		boolean done = false; 
-		do {
-			
-			System.out.println("Are you certain you want to delete " + m_enemy.get_name() + "? (Yes = 1/ No = 0)");
-			try {
-				int a = scanner.nextInt();
-				if (a == 1) {
-					m_encounter.delete_enemy(m_enemy);
-					String name = m_enemy.get_name();
-					m_enemy = null; 
-					System.out.println(name + " was succesfully deleted.");
-					removed = true;
-					done = true; 
-				}
-				else if (a == 0) {
-					System.out.println("Phew, that was close. \n" + m_enemy.get_name() + " will not be deleted.");
-					removed = false; 
-					done = true; 
-				}
-				else {
-					System.out.println(OneOrZeroException); 
-				}
-			}
-			catch (Exception e) {
-				System.out.println(OneOrZeroException);
-				//System.out.println("Error resulting from:  " + e);
-				scanner.next();
-			}
-			
-		} while (done == false);
-		
-		return removed; 
-	}
-	
-	/*
 	 * Asks User to choose which, if any, weaknesses will be added to the Monster
 	 */
 	private static void addWeaknesses() {
@@ -1010,6 +1003,188 @@ public class monsterEditor extends encounterEditor{
 			
 		} while (done == false);
 		
+	}
+	
+	/*
+	 * Gets User input on what items to add to the Monster's inventory and what items to delete
+	 * from the Monster's inventory. 
+	 */
+	private static void editItems() {
+		
+		boolean done = false;
+		do {
+			
+			System.out.println("Do you want to add any items? (Yes = 1/ No = 0)");
+			try {
+				int a = scanner.nextInt();
+				if (a == 1) {
+					scanner.nextLine();
+					System.out.println("Name the Item: ");
+					String name = scanner.nextLine();
+					System.out.println("Describe the Item: ");
+					String descrip = scanner.nextLine();
+					m_enemy.add_items(name, descrip);
+					System.out.println(name + " was successfully added to " + m_enemy.get_name() + "'s inventory.");
+				}
+				else if (a == 0) {
+					System.out.println("No further items will be added.");
+					done = true; 
+				}
+				else {
+					System.out.println(OneOrZeroException);
+				}
+			}
+			catch(Exception e) {
+				System.out.println(OneOrZeroException);
+				//System.out.println("Error resulting from:  " + e);
+				scanner.next();
+			}
+			
+		} while (done == false);
+		
+		deleteItems();
+	}
+	
+	/*
+	 * Internal function of editItems that verifies and deletes items that the User
+	 * no longer wants in this Monster's inventory. 
+	 */
+	private static void deleteItems() {
+		
+		boolean done = false; 
+		do {
+			
+			if (m_enemy.get_items_w_descrip().isEmpty()) {
+				done = true;
+				System.out.println(m_enemy.get_name() + "'s inventory is empty.");
+				continue; 
+			}
+			
+			ArrayList<String> items = m_enemy.get_item_names();
+			System.out.println("Do you want to delete any items? (Yes = 1/ No = 0)");
+			try {
+				int a = scanner.nextInt();
+				if (a == 1) {
+					int i = 1;
+					for (String item: m_enemy.get_item_names()) {
+						System.out.println(i + ") " + item);
+						i++; 
+					}
+					
+					System.out.println("Type the number of the item you wish to delete: ");
+					
+					try {
+						
+						int n = scanner.nextInt(); 
+						if (n < 1) {
+							System.out.println(OutOfRangeException);
+						}
+	
+						else if (n > items.size()) {
+							System.out.println(OutOfRangeException);
+						}
+						else {
+							String thing = items.get(n-1);
+							m_enemy.get_items_w_descrip().remove(thing);
+							System.out.println(thing + " was successfully deleted.");
+						}
+					}
+					catch (Exception e) {
+							//
+					}
+				}
+				else if (a == 0) {
+					System.out.println("No further items will be deleted.");
+					done = true; 
+				}
+				else {
+					System.out.println(OneOrZeroException);
+				}
+			}
+			catch (Exception e) {
+				System.out.println(OutOfRangeException);
+				//System.out.println("Error resulting from:  " + e);
+				scanner.next();
+			}
+			
+		} while (done == false);
+		
+	}
+	
+	/*
+	 * Verifies that the User wants to save this Monster to a file.
+	 * If so, a new text file will be created and saved with the Monster's information. 
+	 */
+	public static void saveEnemy() {
+		
+		boolean done = false; 
+		do {
+			
+			System.out.println("Do you want to save " + m_enemy.get_name() + " to a file? (Yes = 1/ No = 0)");
+			try {
+				int a = scanner.nextInt();
+				if (a == 1) {
+					m_enemy.autoSave();
+					System.out.println(m_enemy.get_name() + " was successfully saved.");
+					done = true; 
+				}
+				else if (a == 0) {
+					System.out.println(m_enemy.get_name() + " will not be saved.");
+					done = true; 
+				}
+				else {
+					System.out.println(OneOrZeroException);
+				}
+			}
+			catch (Exception e) {
+				System.out.println(OneOrZeroException);
+				System.out.println("Error resulting from:  " + e);
+				scanner.next();
+			}
+		} while (done == false);
+		
+	}
+	
+	/*
+	 * Verifies that the User wants to delete this Monster object. 
+	 * If so, the Monster will be removed from its Encounter and deleted. 
+	 * 
+	 * @return		boolean		:true if Monster is deleted, false otherwise. 
+	 */
+	private static boolean deleteEnemy() {
+		boolean removed = false;
+		boolean done = false; 
+		do {
+			
+			System.out.println("Are you certain you want to delete " + m_enemy.get_name() + "? (Yes = 1/ No = 0)");
+			try {
+				int a = scanner.nextInt();
+				if (a == 1) {
+					m_encounter.delete_enemy(m_enemy);
+					String name = m_enemy.get_name();
+					m_enemy = null; 
+					System.out.println(name + " was succesfully deleted.");
+					removed = true;
+					done = true; 
+				}
+				else if (a == 0) {
+					System.out.println("Phew, that was close. \n" + m_enemy.get_name() + " will not be deleted.");
+					removed = false; 
+					done = true; 
+				}
+				else {
+					System.out.println(OneOrZeroException); 
+				}
+			}
+			catch (Exception e) {
+				System.out.println(OneOrZeroException);
+				//System.out.println("Error resulting from:  " + e);
+				scanner.next();
+			}
+			
+		} while (done == false);
+		
+		return removed; 
 	}
 	
 }

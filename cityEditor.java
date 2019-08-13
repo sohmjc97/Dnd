@@ -17,13 +17,13 @@ public class cityEditor extends WorldEditor {
 		System.out.println("Welcome to City Editor!");
 		do {
 			System.out.println("Which city would you like to edit?");
-			System.out.println(listCityChoices());
+			listCityChoices();
 			try {
 				int a = scanner.nextInt();
-				if (a <= 0) {
+				if (a < 1) {
 					System.out.println(OutOfRangeException);
 				}
-				else if (a > (m_country.m_cities.size() + 3)) {
+				else if (a > (m_country.m_cities.size() + 2)) {
 					System.out.println(OutOfRangeException);
 				}
 				else {
@@ -41,81 +41,45 @@ public class cityEditor extends WorldEditor {
 	/*
 	 * Lists all options for cityEditor, including to add a new CIty, return to previous menu, or edit any existing City
 	 */
-	private static String listCityChoices () {
+	private static void listCityChoices () {
 		
 		String output = ""; 
-		int n = m_country.get_cities().size(); 
+		int cityCount = m_country.get_cities().size(); 
 		//System.out.println("City Count: " + n);
-		int i = 0; 
 		output = output + "1) " + "Return to Country Editor \n";
 		output = output + "2) " + "Add new city \n";
-		if (n >= 1) {
-			output = output + "3) " + m_country.get_cities().get(0).get_name() +"\n";
+		
+		for (int i = 0; i< cityCount; i++) {
+			output = output + (i+3) + ") " + m_country.get_cities().get(i).get_name() + "\n"; 
 		}
-		if (n >= 2) {
-			output = output + "4) " + m_country.get_cities().get(1).get_name()+ "\n";
-		}
-		if (n >= 3) {
-			output = output + "5) " + m_country.get_cities().get(2).get_name() + "\n";
-		}
-		if (n >= 4) {
-			output = output + "6) " + m_country.get_cities().get(3).get_name()+ "\n";
-		}
-		if (n >= 5) {
-			output = output + "7) " + m_country.get_cities().get(4).get_name()+ "\n";
-		}
-		if (n >= 6) {
-			output = output + "8) " + m_country.get_cities().get(6).get_name()+ "\n";
-		}
-		//can add more later when needed
-		return output; 
+		System.out.println(output);
 		
 	}
 	
 	/*
 	 * Chooses to return to previous menu, add a City, or edit a City based on user input in edit()
 	 */
-	private static boolean parseCityChoice(int a) {
+	private static boolean parseCityChoice(int choice) {
 		
 		//System.out.println("Parsing choices");
 		boolean done = false;
-		switch (a) {
-			case 1:
-				done = true;
-				break;
-			case 2:
-				scanner.nextLine(); 
-				Worldbuilder.cityCreator(); 
-				// need to get city back from there and added into now 
-				int i = m_country.get_cities().size(); 
-				m_city = m_country.get_cities().get(i-1);
-				break;
-			case 3:
-				m_city = m_country.get_cities().get(0); 
-				parseCityEdits(); 
-				break;
-			case 4:
-				m_city = m_country.get_cities().get(1);
-				parseCityEdits(); 
-				break;
-			case 5:
-				m_city = m_country.get_cities().get(2);
-				parseCityEdits(); 
-				break;
-			case 6:
-				m_city = m_country.get_cities().get(3);
-				parseCityEdits(); 
-				break;
-			case 7:
-				m_city = m_country.get_cities().get(4);
-				parseCityEdits(); 
-				break;
-			case 8:
-				m_city = m_country.get_cities().get(5);
-				parseCityEdits(); 
-				break;
+		
+		if (choice == 1) {
+			System.out.println("Returning to Country Menu");
+			done = true;
+		}
+		else if (choice == 2) {
+			scanner.nextLine(); 
+			Worldbuilder.cityCreator(); 
+			int i = m_country.get_cities().size(); 
+			m_city = m_country.get_cities().get(i-1);
+		}
+		else {
+			m_city = m_country.get_cities().get(choice - 3); 
+			parseCityEdits();
 		}
 		return done; 
+		
 	}
 	
 	/*
@@ -207,8 +171,12 @@ public class cityEditor extends WorldEditor {
 				break;
 			case 8:
 				Worldbuilder.constructNPCs();
-				//edit_NPCs(); Unnecessary, save for later
-				delete_NPCs(); 
+				if (m_city.get_NPCs().size() == 0) {
+					System.out.println("There aren't any NPC's to delete, so we'll skip that step.");
+				}
+				else {
+					delete_NPCs(); 
+				}
 				break;
 			case 9:
 				Worldbuilder.customizeBuildings();
@@ -220,7 +188,19 @@ public class cityEditor extends WorldEditor {
 				m_city.list_all_info();
 				break;
 			case 12:
-				Worldbuilder.saveCity();
+				boolean saved = Worldbuilder.saveCity();
+				if (saved) {
+					System.out.println("Saving " + m_city.get_name());
+					for (Encounter e: m_city.get_all_encounters()) {
+						for (Monster m: e.get_enemies()) {
+							m.autoSave();
+							System.out.println("Saving " + m.get_name());
+						}
+						e.autoSave();
+						System.out.println("Saving " + e.get_name());
+					}
+					System.out.println(m_city.get_name() + " and all it contains have been saved.");
+				}
 				break; 
 			case 13:
 				delete_city(); 
@@ -233,20 +213,6 @@ public class cityEditor extends WorldEditor {
 		return done; 
 	}
 	
-	/* This is not super necessary, implement when bored 
-	 * private static void edit_NPCs () {
-		boolean done = false; 
-		do {
-			try {
-				System.out.println("Do you want to add on to ")
-			}
-			catch (Exception e) {
-				System.out.println(MustBeIntException);
-				scanner.next();
-			}
-		} while (done == false);
-	} */
-	
 	/*
 	 * If there are no NPC's, this will do nothing but tell the user that. 
 	 * If there are NPC's, it will verify that the user wants to delete NPC's before continuing. 
@@ -256,64 +222,19 @@ public class cityEditor extends WorldEditor {
 	private static void delete_NPCs () {
 		
 		boolean done = false;
-		if (m_city.get_NPCs().size() == 0) {
-			System.out.println("There aren't any NPC's to delete, so we'll skip that step.");
-		}
-		else {
-			do {
-				try {
-					if (m_city.get_NPCs().size() == 0) {
-						System.out.println("There are no more NPC's left.");
-						done = true; 
-						continue; 
-					}
-					
+		do {
+			try {
+				if (m_city.get_NPCs().size() == 0) {
+					System.out.println("There are no more NPC's left.");
+					done = true; 
+					continue; 
+				}
+				else {
 					System.out.println("Do you want to delete any NPC's ? (Yes = 1/ No = 0)");
 					int a = scanner.nextInt();
 					if (a == 1) {
 						boolean over = false; 
-						do {
-							if (m_city.get_NPCs().size() == 0) {
-								
-								System.out.println("There are no more NPC's.");
-								over = true; 
-								continue; 
-							}
-							else {
-								
-								System.out.println("What NPC do you want to delete?");
-								
-								int i = 1;
-								for (int x = 0; x < m_city.get_NPCs().size(); x++) {
-									System.out.println(i + ") " + m_city.get_NPCs().get(x));
-									i++;
-								}
-								
-								System.out.println("Enter the number of the NPC you want to delete.");
-								int b = scanner.nextInt(); 
-								
-								String name = "";
-								
-								if (b < 1) {
-									System.out.println(OutOfRangeException);
-								}
-								else if (b > m_city.get_NPCs().size()) {
-									System.out.println(OutOfRangeException);
-								}
-								else {
-									name = m_city.get_NPCs().get(b-1).toString();
-								}
-								
-								boolean removed = m_city.delete_NPC(name);
-								if (removed) {
-									System.out.println(name + " has been successfully deleted.");
-									over = true; 
-								}
-								else {
-									System.out.println("There was a problem. Try again.");
-								}
-							}
-						} while (over == false);
+						executeDeletion(); 
 					}
 					else if (a == 0) {
 						System.out.println("No further NPCs will be deleted.");
@@ -323,12 +244,62 @@ public class cityEditor extends WorldEditor {
 						System.out.println(OneOrZeroException);
 					}
 				}
-				catch (Exception e) {
-					System.out.println(OneOrZeroException);
-					scanner.next();
+			}
+			catch (Exception e) {
+				System.out.println(OneOrZeroException);
+				scanner.next();
+			}
+		} while (done == false);
+	}
+		
+	/*
+	 * Gets user input as to which NPC to delete and deletes it 
+	 */
+	private static void executeDeletion() {
+		
+		boolean done = false; 
+		do {
+			System.out.println("What NPC do you want to delete?");
+			
+			int i = 1;
+			for (int x = 0; x < m_city.get_NPCs().size(); x++) {
+				System.out.println(i + ") " + m_city.get_NPCs().get(x));
+				i++;
+			}
+			
+			System.out.println("Enter the number of the NPC you want to delete.");
+			
+			try {
+				int a = scanner.nextInt(); 
+				String name = "";
+				
+				if (a < 1) {
+					System.out.println(OutOfRangeException);
 				}
-			} while (done == false);
-		}
+				else if (a > m_city.get_NPCs().size()) {
+					System.out.println(OutOfRangeException);
+				}
+				else {
+					name = m_city.get_NPCs().get(a-1).toString();
+				}
+				
+				boolean removed = m_city.delete_NPC(name);
+				if (removed) {
+					System.out.println(name + " has been successfully deleted.");
+					done = true; 
+				}
+				else {
+					System.out.println("There was a problem deleting the NPC. Try again.");
+				}
+				
+			}
+			catch (Exception e) {
+				System.out.println(MustBeIntException);
+				System.out.println("Error resulting from: " + e);
+				scanner.next();
+			}
+		} while (done == false);
+		
 	}
 	
 	/*
@@ -342,6 +313,7 @@ public class cityEditor extends WorldEditor {
 		do {
 			//scanner.next();
 			System.out.println("Are you sure you want to delete " + m_city.get_name() + "? (Yes = 1/ No = 0)");
+			System.out.println("Remember, if you delete this city, you will also delete all routes that connect it to other cities.");
 			try {
 					int a = scanner.nextInt(); 
 					if (a == 1) {

@@ -3,6 +3,7 @@ package Dnd;
 import java.util.*;
 
 import Dnd.Country.TerrainType;
+import Dnd.Encounter.EncounterType;
 
 public class Route {
 	/*
@@ -22,6 +23,7 @@ public class Route {
 	
 	private ArrayList<Encounter> m_day_encounters = new ArrayList<Encounter>();
 	private ArrayList<Encounter> m_night_encounters = new ArrayList<Encounter>();
+	private ArrayList<Encounter> m_all_encounters = new ArrayList<Encounter>(); 
 	
 	/*
 	 * Constructor
@@ -161,53 +163,82 @@ public class Route {
 		
 	}
 	
-	/*
-	 * Returns a String of formatted details asociated with this Route
-	 * 
-	 * @return 	output String	:a huge String containing all Route details 
-	 */
-	public String get_all_info () {
+	public ArrayList<Encounter> get_all_encounters() {
 		
-		String output = "";
-		
-		output = output + "Route #" + m_route_id + " " + m_name + "\n"; 
-		output = output + "( " + m_origin.get_name() + " ----> " + m_destination.get_name() + " ) \n";
-		output = output + "Description: " + m_description + "\n";
-		output = output + "Terrain Type: " + m_terrainType + "\n"; 
-		output = output + "Length: " + m_length + " Days' Travel \n";
-		output = output + "Day Encounters: \n";
-		int x = 1;
-		for (Encounter i: m_day_encounters) {
-			output = output + x + ") " + i.get_encounter_name() + "\n";
-			x++;
-		}
-		output = output + "Night Encounters: \n";
-		int y = 1;
-		for (Encounter i: m_night_encounters) {
-			output = output + y + ") " + i.get_encounter_name() + "\n";
-			y++;
-		}
-		return output; 
+		return m_all_encounters; 
 		
 	}
 	
 	/*
-	 * Creates an encounter object amd adds it to this Route's list 
+	 * Creates an encounter object and adds it to this Route's list 
 	 * of encounters. 
 	 * 
 	 * @param	route Route		:The route to which this encounter belongs
 	 * @param	name String		:What this encounter is to be called 
 	 */
-	public void add_day_encounters (Route route, String name) {
+	public Encounter add_encounters (Route route, String name, EncounterType eType) {
 		
-		Encounter encounter = new Encounter(route, name.strip());
-		m_day_encounters.add(encounter);
+		Encounter encounter = new Encounter(route, name.strip(), eType);
+		if (encounter.get_encounterType() == EncounterType.DAY) {
+			m_day_encounters.add(encounter);
+		}
+		else {
+			m_night_encounters.add(encounter);
+		}		
+		m_all_encounters.add(encounter);
+		return encounter;
 		
 	}
 	
-	/*public void add_night_encounters (String name) {
-		m_night_encounters.add(name); 
-	}*/
+	/*
+	 * Adds an existing Encounter to this Route
+	 * 
+	 * @param	encounter Encounter		:the Encounter to be appended to this Route
+	 */
+	public void append_encounter(Encounter encounter) {
+		
+		if (encounter.get_encounterType() == EncounterType.DAY) {
+			m_day_encounters.add(encounter);
+		}
+		else {
+			m_night_encounters.add(encounter);
+		}
+		m_all_encounters.add(encounter);
+		encounter.m_route = this; 
+		
+	}
+	
+	/*
+	 * Removes an Encounter from this Route without deleting it. This is used for moving
+	 * Encounters between Routes and Cities. 
+	 * 
+	 * @param 	encounter Encounter 	:the Encounter that is to be removed 
+	 */
+    public void removeEncounter (Encounter encounter) {
+    	
+    	m_day_encounters.remove(encounter);
+    	m_night_encounters.remove(encounter);
+    	m_all_encounters.remove(encounter);
+    	
+    }
+    
+    /*
+     * Removes an Encounter from this Route and deletes it entirely. 
+     * 
+     * @param	encounter Encounter 	:the Encounter that is to be deleted
+     */
+    public void deleteEncounter (Encounter encounter) {
+    	
+    	this.removeEncounter(encounter);
+    	encounter = null; 
+    	
+    }
+	
+	public void autoSave () {
+		
+		FileCreator newfile = new FileCreator(this); 
+		
+	}
 	
 	/*
 	 * Sets the duration of the trip 
@@ -253,10 +284,34 @@ public class Route {
 		
 	}
 	
-    public void removeEncounter (Encounter encounter) {
-    	
-    	m_day_encounters.remove(encounter);
-    	
-    }
+	/*
+	 * Returns a String of formatted details asociated with this Route
+	 * 
+	 * @return 	output String	:a huge String containing all Route details 
+	 */
+	public String get_all_info () {
+		
+		String output = "";
+		
+		output = output + "Route #" + m_route_id + " " + m_name + "\n"; 
+		output = output + "<< " + m_origin.get_name() + " ----> " + m_destination.get_name() + " >> \n";
+		output = output + "Description: " + m_description + "\n";
+		output = output + "Terrain Type: " + m_terrainType + "\n"; 
+		output = output + "Length: " + m_length + " Days' Travel \n";
+		output = output + "(Day Encounters) \n";
+		int x = 1;
+		for (Encounter i: m_day_encounters) {
+			output = output + x + ") " + i.get_encounter_name() + "\n";
+			x++;
+		}
+		output = output + "(Night Encounters) \n";
+		int y = 1;
+		for (Encounter i: m_night_encounters) {
+			output = output + y + ") " + i.get_encounter_name() + "\n";
+			y++;
+		}
+		return output; 
+		
+	}
 
 }

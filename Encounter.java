@@ -1,5 +1,6 @@
 package Dnd;
 
+import java.io.IOException;
 import java.util.*;
 
 public class Encounter {
@@ -7,13 +8,21 @@ public class Encounter {
 	 * Class to hold information on individual encounters 
 	 */
 	
+	public enum EncounterType {
+		DAY,
+		NIGHT
+	}
+	
 	private static int encounter_count = 0;
+	private int m_encounter_id = 0;
 	private String m_name = "encounter";
 	private String m_description = "";
-	private int m_encounter_id = 0;
-	private Route m_route = null; 
-	private City m_city = null;
+	
+	Route m_route = null; 
+	City m_city = null;
 	private Country m_country = null; 
+	
+	private EncounterType m_encounter_type; 
 	
 	private ArrayList<Monster> m_enemy_list = new ArrayList<Monster>(); 
 
@@ -23,14 +32,15 @@ public class Encounter {
 	 * @param	route Route		:the Route where this Encounter takes place
 	 * @param	name String		:the name of this Encounter 
 	 */
-	public Encounter (Route route, String name) {
+	public Encounter (Route route, String name, EncounterType encounterType) {
 		
 		m_name = name;
 		m_route = route; 
 		m_country = route.get_country();
 		encounter_count++;
 		m_encounter_id = encounter_count;
-		
+		m_encounter_type = encounterType; 
+
 	}
 	
 	/*
@@ -39,13 +49,14 @@ public class Encounter {
 	 * @param	city City		:the City where this Encounter takes place
 	 * @param	name String		:the name of this Encounter 
 	 */
-	public Encounter (City city, String name) {
+	public Encounter (City city, String name, EncounterType encounterType) {
 		
 		m_name = name;
 		m_city = city; 
 		m_country = city.get_country();
 		encounter_count++;
 		m_encounter_id = encounter_count;
+		m_encounter_type = encounterType; 
 		
 	}
 	
@@ -56,6 +67,28 @@ public class Encounter {
 	public City get_city () {
 		
 		return m_city; 
+		
+	}
+	
+	/*
+	 * Returns the Route that this Encounter takes place on
+	 * 
+	 * @return 		m_route Route	:the Route to which this Encounter belongs
+	 */
+	public Route get_route () {
+		
+		return m_route; 
+		
+	}
+	
+	/*
+	 * Returns the Country to which this Encounter belongs.
+	 * 
+	 * @return 	Country		:the Country this Encounter object belongs to 
+	 */
+	public Country get_country() {
+	
+		return m_country; 
 		
 	}
 	
@@ -93,6 +126,17 @@ public class Encounter {
 	}
 	
 	/*
+	 * Returns the EncounterType of the Encounter: i.e. whether it is Day or NIght
+	 * 
+	 * @return	m_encounter_type EncounterType 		:either EncounterType.DAY or EncounterType.NIGHT
+	 */
+	public EncounterType get_encounterType () {
+		
+		return m_encounter_type; 
+		
+	}
+	
+	/*
 	 * Returns the I.D # (primary key) of the Encounter
 	 * 
 	 * @return	m_id Integer	:the I.D # of the Encounter
@@ -104,16 +148,15 @@ public class Encounter {
 	}
 	
 	/*
-	 * Returns the Route that this Encounter takes place on
+	 * Returns the Encounter's list of enemies 
 	 * 
-	 * @return 		m_route Route	:the Route to which this Encounter belongs
+	 * @return		m_enemy_list ArrayList<Monster>		:the list of Monsters belonging to this Encounter 
 	 */
-	public Route get_route () {
+	public ArrayList<Monster> get_enemies () {
 		
-		return m_route; 
+		return m_enemy_list; 
 		
 	}
-
 	
 	/*
 	 * Creates a new Monster object, adds it to the Encounter, and returns it
@@ -130,6 +173,29 @@ public class Encounter {
 	}
 	
 	/*
+	 * Adds an existing Monster to this Encounter. This is used
+	 * when moving an existing Monster between different Encounters.
+	 * 
+	 * @param	monster Monster		:an eisting Monster to be added to this Encounter
+	 */
+	public void append_enemy (Monster monster) {
+		
+		m_enemy_list.add(monster);
+		//monster.m_encounter = this; 
+		if (m_route == null) {
+			// if this encounter is on a city
+			monster.m_city = m_city;
+			monster.m_route = null; 
+		}
+		else {
+			monster.m_route = m_route;
+			monster.m_city = null; 
+		}
+		
+		
+	}
+	
+	/*
 	 * Removes a Monster from the Encounter and deletes it. 
 	 * 
 	 * @param	monster Monster		:the Monster that is to be deleted 
@@ -142,13 +208,12 @@ public class Encounter {
 	}
 	
 	/*
-	 * Returns the Encounter's list of enemies 
-	 * 
-	 * @return		m_enemy_list ArrayList<Monster>		:the list of Monsters belonging to this Encounter 
+	 * Removes a Monster from this Encounter, but does not delete it. This is used
+	 * when moving Monsters between Encounters.
 	 */
-	public ArrayList<Monster> get_enemies () {
+	public void remove_enemy (Monster monster) {
 		
-		return m_enemy_list; 
+		m_enemy_list.remove(monster);
 		
 	}
 	
@@ -163,37 +228,117 @@ public class Encounter {
 		
 	}
 	
-	public void change_host (Route newRoute) {
+	
+	/*
+	 * This function allows this Encounter to be moved from the Host Location it currently 
+	 * belongs with to a different Route. To make this change permanent,
+	 * be sure to save the old Host Location, the new Route, the Encounter itself, and it enemies.
+	 * after making the switch.
+	 * 
+	 * @param		newRoute Route 		:the Route you want to move the Encounter to
+	 */
+	public void change_host (Route newRoute) throws IOException {
 		
 		if (m_city == null) {
-			Route oldRoute = m_route; 
-			oldRoute.get_day_encounters().remove(this);
-			newRoute.add_day_encounters(newRoute, m_name);
+			//Route oldRoute = m_route; 
+			m_route.get_all_encounters().remove(this);
+			m_route.autoSave(); 
+		
 			m_route = newRoute; 
+			m_route.append_encounter(this);
+			m_route.autoSave(); 
 		}
 		else if (m_route == null) {
-			City oldCity = m_city;
-			oldCity.get_encounters().remove(this);
-			newRoute.add_day_encounters(newRoute, m_name);
+			//City oldCity = m_city;
+			System.out.println(this.get_name() + " will be removed from " + m_city.get_name());
+			m_city.get_all_encounters().remove(this);
+			m_city.autoSave();
+			//System.out.println(m_city.get_name() + " now has Encounters: ");
+			//for (Encounter e: m_city.get_all_encounters()) {
+			//	System.out.println(e.get_name());
+			//}
+			
 			m_route = newRoute; 
+			m_route.append_encounter(this);
+			System.out.println("The new route is " + m_route.get_name());
+			m_city = null;
+			m_route.autoSave(); 
+			//System.out.println(m_route.get_name() + " has been saved.");
+		}
+		
+		this.autoSave();
+		
+		//System.out.println(this.get_name() + " has been saved");
+		for (Monster i: m_enemy_list) {
+			i.m_r_host = m_route;
+			i.m_c_host = null;
+			i.autoSave();
+			//System.out.println(i.get_name() + " has been saved.");
 		}
 		
 	}
 	
-	public void change_host (City newCity) {
+	/*
+	 * This function allows this Encounter to be moved from the Host Location it currently 
+	 * belongs with to a different City. To make this change permanent,
+	 * be sure to save the old Host Location, the new City, the Encounter itself, and it enemies.
+	 * after making the switch.
+	 * 
+	 * @param		new CIty City 		:the City you want to move the Encounter to
+	 */
+	public void change_host (City newCity) throws IOException {
 		
 		if (m_city == null) {
-			Route oldRoute = m_route; 
-			oldRoute.removeEncounter(this);
-			newCity.add_encounters(newCity, m_name);
+			//route ---> city
+			//Route oldRoute = m_route; 
+			System.out.println(this.get_name() + " will be removed from " + m_route.get_name());
+			m_route.removeEncounter(this);
+			m_route.autoSave();
+			//System.out.println(m_route.get_name() + " now has Encounters: ");
+			//for (Encounter e: m_route.get_all_encounters()) {
+				//System.out.println(e.get_name());
+			//}
 			m_city = newCity; 
+			m_city.append_encounter(this);
+			System.out.println("The new city is " + m_city.get_name());
+			m_route =  null;
+			m_city.autoSave();
+			//System.out.println(m_city.get_name() + " has been saved.");
 		}
 		else if (m_route == null) {
-			City oldCity = m_city;
-			oldCity.removeEncounter(this);
-			newCity.add_encounters(newCity, m_name);
+			//city ---> city
+			//City oldCity = m_city;
+			m_city.removeEncounter(this);
+			m_city.autoSave(); 
+
 			m_city = newCity; 
+			
+			m_city.append_encounter(this);
+			m_city.autoSave();
 		}
+		
+		this.autoSave();
+		//System.out.println(this.get_name() + " has been saved");
+		for (Monster i: m_enemy_list) {
+			//System.out.println("Saving " + i.get_name() + "to new location: " + i.get_encounter().get_name() + " in " + i.get_encounter().get_city().get_name());
+			i.m_c_host = m_city;
+			i.m_r_host = null;
+			i.autoSave();
+			//System.out.println(i.get_name() + " has been saved.");
+
+		}
+
+	}
+	
+	
+	/*
+	 * This is used for situations where multiple things are saved at once or
+	 * during actions where a new Object is created and it is necessary to create
+	 * a file for that object or save its name to its parent file to preserve it. 
+	 */
+	public void autoSave () {
+		
+		FileCreator newfile = new FileCreator(this); 
 		
 	}
 	
@@ -213,7 +358,7 @@ public class Encounter {
 		else {
 			output = output + "Location: " + m_route.get_name() + "\n";
 		}
-		
+		output = output + "Type: " + m_encounter_type +"\n";
 		output = output + "Enemies: \n";
 		for (Monster i: m_enemy_list) {
 			output = output + i.get_all_stats();
@@ -231,14 +376,4 @@ public class Encounter {
 		
 	}
 
-	/*
-	 * Returns the Country to which this Encounter belongs.
-	 * 
-	 * @return 	Country		:the Country this Encounter object belongs to 
-	 */
-	public Country get_country() {
-	
-		return m_country; 
-		
-	}
 }

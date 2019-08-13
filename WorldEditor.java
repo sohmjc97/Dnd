@@ -5,7 +5,8 @@ import java.util.*;
 
 import Dnd.Being.DamageTypes;
 import Dnd.Country.CityType;
-import Dnd.Country.TerrainType; 
+import Dnd.Country.TerrainType;
+import Dnd.Encounter.EncounterType; 
 
 public class WorldEditor extends Worldbuilder {
 	/*
@@ -100,10 +101,11 @@ public class WorldEditor extends Worldbuilder {
 			String result = filesearch.parseFile(filename, i+")"); 
 			cityResults.add(result);
 		}
-
+		
 		//System.out.println(cityResults);
 		reconstructCities(cityResults, country);
-
+		
+		
 		String route = "";
 		for (int r = 1; r < 15; r++) {
 			route = ""; 
@@ -123,7 +125,7 @@ public class WorldEditor extends Worldbuilder {
 			}
 			
 		}
-
+		
 		reconstructRoutes(routeResults, country); 
 		
 		//System.out.println(country.get_routes());
@@ -238,7 +240,7 @@ public class WorldEditor extends Worldbuilder {
 			//System.out.println("Encounters: " + encounters);
 			//System.out.println(npc_descrip_list);
 			//System.out.println("Got to through file parsing.");
-
+			
 			populateCityVariable(attributeResults, npc_descrip_list, buildings, encounters, i); 
 
 		}
@@ -306,24 +308,47 @@ public class WorldEditor extends Worldbuilder {
 		}
 		
 		if (encounters.equalsIgnoreCase("")) {
-			System.out.println("No encounters to add.");
+			System.out.println("No encounters to add in " + city.get_name());
 		}
 		else {
 			//System.out.println("Encounters String -- " + encounters); 
-			String[] encounter_array = encounters.split("\n");
-			//int i = 1;
-			for (String item: encounter_array) {
-				//System.out.println("Lines of encounter String --" + item); 
-				String info = item.split("\\)")[1];
-	
-				//String[] splitInfo = info.split(":");
-				
-				String e_name = info.strip(); 
-				//String e_descrip = splitInfo[1].strip();
-				
-				Encounter e = city.add_encounters(city, e_name);
-				//e.set_description(e_descrip);
-				//i++;
+			String[] parts = encounters.split("\\(Night Encounters\\)");
+			String day_encounters = parts[0];
+			String night_encounters = parts[1];
+			String[] night_encounter_array = night_encounters.split("\n");
+			String[] day_encounter_array = day_encounters.split("\n");
+
+			for (String item: day_encounter_array) {
+				item = item.strip();
+				if (!item.contains("Day Encounters")) {
+					//System.out.println("Lines of city day encounter String --" + item); 
+					String info = item.split("\\)")[1];
+		
+					//String[] splitInfo = info.split(":");
+					
+					String e_name = info.strip(); 
+					//String e_descrip = splitInfo[1].strip();
+					
+					Encounter e = city.add_encounters(city, e_name, EncounterType.DAY);
+					//e.set_description(e_descrip);
+					//i++;
+				}
+			}
+			for (String item: night_encounter_array) {
+				//System.out.println("Lines of city night encounter String --" + item); 
+				item = item.strip();
+				if (item != "") {
+					String info = item.split("\\)")[1];
+		
+					//String[] splitInfo = info.split(":");
+					
+					String e_name = info.strip(); 
+					//String e_descrip = splitInfo[1].strip();
+					
+					Encounter e = city.add_encounters(city, e_name, EncounterType.NIGHT);
+					//e.set_description(e_descrip);
+					//i++;
+				}
 			}
 			//System.out.println("Got to end of populateCityVariables..");
 		} 
@@ -386,13 +411,47 @@ public class WorldEditor extends Worldbuilder {
 				}
 				//System.out.println(results + "\n");
 			}
+			for (Encounter encounter: route.get_night_encounters()) {
+				System.out.println("Attempting to retreive " + encounter.get_name());
+				String results = "";
+				try {
+					results = filesearch.parseFile(encounter.get_name(), " ", country, route);
+				}
+				catch (Exception e) {
+					System.out.println("There is not yet a file saved for " + encounter.get_name());
+				}
+				if (results == "") {
+					System.out.println("Cannot glean any information for this Encounter. \n");
+				}
+				else {
+					populateEncounterVariables(encounter, results);
+				}
+				//System.out.println(results + "\n");
+			}
 		}
 		
 		//get City Encounters 
 		for (City city: country.get_cities()) {
 			System.out.println("Looking for encounters in " + city.get_name());
 			//System.out.println(city.get_encounters());
-			for (Encounter encounter: city.m_encounters) {
+			for (Encounter encounter: city.m_day_encounters) {
+				System.out.println("Attempting to retreive " + encounter.get_name());
+				
+				String results = "";
+				try {
+					results = filesearch.parseFile(encounter.get_name(), " ", country, city);
+				}
+				catch (Exception e) {
+					System.out.println("There is not yet a file saved for " + encounter.get_name());
+				}
+				if (results == "") {
+					System.out.println("Cannot glean any information for this Encounter. \n");
+				}
+				else {
+					populateEncounterVariables(encounter, results);
+				}
+			}
+			for (Encounter encounter: city.m_night_encounters) {
 				System.out.println("Attempting to retreive " + encounter.get_name());
 				
 				String results = "";
@@ -673,7 +732,7 @@ public class WorldEditor extends Worldbuilder {
 		if (validOrigin & validDestin) {
 			Route newRoute = new Route(originCity, destinCity); 
 			m_route = newRoute; 
-			country.add_route(newRoute);
+			country.add_route(m_route);
 		}
 		else {
 			System.out.println("Endpoint cities not valid.");
@@ -707,20 +766,59 @@ public class WorldEditor extends Worldbuilder {
 				m_route.set_terrainType(i);
 			}
 		}
-		
+		String encounter = "";
 		ArrayList<String> encounterList = new ArrayList<String>();
-		for (int x = 1; x < 20; x++) {
-			String encounter = filesearch.parseFile(name, x+")", country, "r");
-			if (encounter != "") {
+		//for (int x = 1; x < 20; x++) {
+		encounter = filesearch.parseFile(name, ")", country, "r");
+		/*	if (encounter != "") {
 				String encounterName = encounter.split("\\)")[1];
 				encounterList.add(encounterName);
 			}
+		}*/
+		//System.out.println("here");
+		//System.out.println("Encounters String -- " + encounter); 
+		String[] parts = encounter.split("\\(Night Encounters\\)");
+		String day_encounters = parts[0];
+		String night_encounters = parts[1];
+		String[] night_encounter_array = night_encounters.split("\n");
+		String[] day_encounter_array = day_encounters.split("\n");
+		//int i = 1;
+		for (String item: day_encounter_array) {
+			item = item.strip();
+			if (!item.contains("Day Encounters")) {
+				//System.out.println("Lines of city day encounter String --" + item); 
+				String info = item.split("\\)")[1];
+	
+				//String[] splitInfo = info.split(":");
+				
+				String e_name = info.strip(); 
+				//String e_descrip = splitInfo[1].strip();
+				
+				Encounter e = m_route.add_encounters(m_route, e_name, EncounterType.DAY);
+				//e.set_description(e_descrip);
+				//i++;
+			}
 		}
-		
+		for (String item: night_encounter_array) {
+			//System.out.println("Lines of city night encounter String --" + item); 
+			item = item.strip();
+			if (item != "") {
+				String info = item.split("\\)")[1];
+	
+				//String[] splitInfo = info.split(":");
+				
+				String e_name = info.strip(); 
+				//String e_descrip = splitInfo[1].strip();
+				
+				Encounter e = m_route.add_encounters(m_route, e_name, EncounterType.NIGHT);
+				//e.set_description(e_descrip);
+				//i++;
+			}
+		}
 		//System.out.println(encounterList);
-		for (int y = 0; y < encounterList.size(); y++) {
-			m_route.add_day_encounters(m_route, encounterList.get(y));
-		}
+		//for (int y = 0; y < encounterList.size(); y++) {
+		//	m_route.add_day_encounters(m_route, encounterList.get(y));
+		//}
 		
 		System.out.println(m_route.get_all_info()); 
 		
@@ -771,7 +869,7 @@ public class WorldEditor extends Worldbuilder {
 		output = output + "6) Cities \n";
 		output = output + "7) Routes \n";
 		output = output + "8) View Country Details \n";
-		output = output + "9) Save Edits \n";
+		output = output + "9) Save Edits (Note: this will save everything within the Country) \n";
 		output = output + "10) Exit Editor \n";
 		System.out.println(output);
 	}
@@ -821,7 +919,30 @@ public class WorldEditor extends Worldbuilder {
 				m_country.list_all_info();
 				break;
 			case 9:
-				Worldbuilder.saveCountry();
+				//Note: Saving the Country saves everything inside of it 
+				//This is a master save 
+				boolean saved = Worldbuilder.saveCountry();
+				if (saved) {
+					for (City city: m_country.get_cities()) {
+						for (Encounter e: city.get_all_encounters()) {
+							for (Monster m: e.get_enemies()) {
+								m.autoSave();
+							}
+							e.autoSave();
+						}
+						city.autoSave();
+					}
+					
+					for (Route route: m_country.get_routes()) {
+						for (Encounter e: route.get_all_encounters()) {
+							for (Monster m: e.get_enemies()) {
+								m.autoSave();
+							}
+							e.autoSave();
+						}
+						route.autoSave();
+					}
+				}
 				break; 
 			case 10:
 				done = true;

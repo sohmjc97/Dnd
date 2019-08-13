@@ -4,6 +4,7 @@ import java.util.*;
 
 import Dnd.Country.CityType;
 import Dnd.Country.TerrainType;
+import Dnd.Encounter.EncounterType;
 
 public class Worldbuilder {
 	/*
@@ -115,94 +116,125 @@ public class Worldbuilder {
 			boolean done = false; 
 			do {
 				City origin = null;
-				City destination = null; 
+				City destin = null; 
+				System.out.println("Do you want to add a route? (Yes = 1/ No = 0)");
 				try {
-					System.out.println("Now let's add routes between the cities.");
-					boolean first = false;
-					do {
+					int a = scanner.nextInt();
+					if (a == 1) {
+						origin = getOriginCity();
+						destin = getDestinCity();
 						
-						int i = 1;
-						for (City city:m_country.get_cities()) {
-							System.out.println(i + ") " + city.get_name());
-							i++;
-						}
+						m_route = new Route(origin, destin);
+						m_country.add_route(m_route);
 						
-						System.out.println("Type the number of the origin city.");
-						int a = scanner.nextInt();
-						if (a < 0) {
-							System.out.println(OutOfRangeException);
-						}
-						else if (a > m_country.get_cities().size()) {
-							System.out.println(OutOfRangeException);
-						}
-						else {
-							for (int n = 0; n < m_country.get_cities().size(); n++) {
-								if ( (n+1) == a) {
-									origin = m_country.get_cities().get(n);
-								}
-							}
-							first = true;
-						}
-					}while (first == false); 
-					
-					boolean second = false;
-					do {
+						System.out.println("Route # " + m_route.get_route_id() + " has been created.");
 						
-						int j = 1;
-						for (City city: m_country.get_cities()) {
-							System.out.println(j + ") " + city.get_name());
-							j++;
-						}
-						
-						System.out.println("Type the number of the destination city.");
-						int b = scanner.nextInt();
-						if (b < 0) {
-							System.out.println(OutOfRangeException);
-						}
-						else if (b > m_country.get_cities().size()) {
-							System.out.println(OutOfRangeException);
-						}
-						else {
-							for (int n = 0; n < m_country.get_cities().size(); n++) {
-								if ( (n+1) == b) {
-									destination = m_country.get_cities().get(n);
-								}
-							}
-							second = true;
-						}
-					} while (second == false);
-					
-					m_route = new Route(origin, destination);
-					m_country.add_route(m_route);
-					System.out.println("Route # " + m_route.get_route_id() + " has been created.");
-					
-					constructTerrain(m_route);
-					constructLength();
-					addEncounters(m_route); 
-					nameRoute();
-					System.out.println(m_route.get_all_info());
-					saveRoute();
-	
-					System.out.println("Do you want to add another route? (Yes = 1/ No = 0) ");
-					int v = scanner.nextInt();
-					if (v==1) {
-						continue;
+						constructTerrain(m_route);
+						constructLength();
+						addEncounters(m_route); 
+						nameRoute();
+						System.out.println(m_route.get_all_info());
+						saveRoute();
 					}
-					else if (v==0) {
-						System.out.println("No furhter routes will be added.");
-						done = true;
+					else if (a == 0) {
+						System.out.println("No further routes will be added.");
+						done = true; 
 					}
 					else {
 						System.out.println(OneOrZeroException);
 					}
 				}
 				catch(Exception e) {
-					System.out.println(GenericException);
+					System.out.println(MustBeIntException);
 					System.out.println("Error resulting from: " + e);
 					scanner.next();
 				}
-			}while(done==false);
+			}while(done == false);
 		} 
+	}
+
+	/*
+	 * Gets user input for which of the Cities in the Country should be the Origin City for this Route
+	 */
+	private static City getOriginCity () {
+		
+		City origin = null; 
+		boolean first = false;
+		do {
+			int i = 1;
+			for (City city:m_country.get_cities()) {
+				System.out.println(i + ") " + city.get_name());
+				i++;
+			}
+			
+			System.out.println("Type the number of the origin city.");
+			try {
+				int a = scanner.nextInt();
+				if (a < 1) {
+					System.out.println(OutOfRangeException);
+				}
+				else if (a > m_country.get_cities().size()) {
+					System.out.println(OutOfRangeException);
+				}
+				else {
+					for (int n = 0; n < m_country.get_cities().size(); n++) {
+						if ( (n+1) == a) {
+							origin = m_country.get_cities().get(n);
+						}
+					}
+					first = true;
+				}
+			}
+			catch(Exception e) {
+				System.out.println(MustBeIntException);
+				System.out.println("Error resulting from: " + e);
+				scanner.next();
+			}
+		}while (first == false); 
+		return origin; 
+		
+	}
+	
+	/*
+	 * Gets user input for which of the Cities in the Country should be the Destination City for this Route
+	 */
+	private static City getDestinCity() {
+		
+		City destin = null;
+		boolean second = false;
+		do {
+			int j = 1;
+			for (City city: m_country.get_cities()) {
+				System.out.println(j + ") " + city.get_name());
+				j++;
+			}
+			
+			System.out.println("Type the number of the destination city.");
+			try {
+				int a = scanner.nextInt();
+				if (a < 1) {
+					System.out.println(OutOfRangeException);
+				}
+				else if (a > m_country.get_cities().size()) {
+					System.out.println(OutOfRangeException);
+				}
+				else {
+					for (int n = 0; n < m_country.get_cities().size(); n++) {
+						if ( (n+1) == a) {
+							destin = m_country.get_cities().get(n);
+						}
+					}
+					second = true;
+				}
+			} 
+			catch (Exception e) {
+				System.out.println(MustBeIntException);
+				System.out.println("Error resulting from: " + e);
+				scanner.next();
+			}
+		} while (second == false);
+		return destin; 
+		
 	}
 	
 	/*
@@ -218,22 +250,14 @@ public class Worldbuilder {
 				System.out.println("Do you want to add encounters to this route? (Yes = 1/ No = 0)");
 				int a = scanner.nextInt();
 				if (a == 1) {
-					boolean time = false;
-					do {
-						System.out.println("Enter Day Encounter name: ");
-						scanner.nextLine(); 
-						String name = scanner.nextLine();
-						
-						System.out.println(name + " will be added as an encounter.");
-						m_route.add_day_encounters(m_route, name);
-						time = true;
-						
-						/* Refactoring Note:
-						 * Add Night encounters as well
-						 * eventually
-						 */
-							
-					} while(time==false);
+					System.out.println("Enter Encounter name: ");
+					scanner.nextLine(); 
+					String name = scanner.nextLine();
+					EncounterType eType = getEncounterType(); 
+					
+					System.out.println(name + " will be added as an encounter.");
+					Encounter e = m_route.add_encounters(m_route, name, eType);
+					e.autoSave();
 				}
 				else if (a == 0) {
 					System.out.println("No furhter encounters will be added.");
@@ -259,28 +283,19 @@ public class Worldbuilder {
 	protected static void addEncounters (City city) {
 		
 		boolean done = false; 
-		int n = 0;
 		do {
 			try {
 				System.out.println("Do you want to add encounters to this city? (Yes = 1/ No = 0)");
 				int a = scanner.nextInt();
 				if (a == 1) {
-					boolean time = false;
-					do {
-						System.out.println("Enter Encounter name: ");
-						scanner.nextLine(); 
-						String name = scanner.nextLine();
-						
-						System.out.println(name + " will be added as an encounter.");
-						m_city.add_encounters(m_city, name);
-						time = true;
-						
-						/* Refactoring Note:
-						 * Add Night encounters as well
-						 * eventually
-						 */
-							
-					} while(time==false);
+					System.out.println("Enter Encounter name: ");
+					scanner.nextLine(); 
+					String name = scanner.nextLine();
+					EncounterType eType = getEncounterType();
+					
+					System.out.println(name + " will be added as an encounter.");
+					Encounter e = m_city.add_encounters(m_city, name, eType);
+					e.autoSave();
 				}
 				else if (a == 0) {
 					System.out.println("No furhter encounters will be added.");
@@ -292,11 +307,42 @@ public class Worldbuilder {
 			
 			}
 			catch (Exception e) {
-				System.out.println(GenericException);
+				System.out.println(MustBeIntException);
 				//System.out.println("Error resulting from: " + e);
 				scanner.next();
 			}
 		}while (done == false); 
+	}
+	
+	/*
+	 * Gets user input for whether the Encounter should be a Day or a Night Encounter 
+	 */
+	protected static EncounterType getEncounterType () {
+		
+		EncounterType eType = null; 
+		do {
+			System.out.println("Is this a 1) Day Encounter or 2) Night Encounter?");
+			try {
+				int b = scanner.nextInt();
+				if (b == 1) {
+					eType = EncounterType.DAY; 
+				}
+				else if (b == 2) {
+					eType = EncounterType.NIGHT;
+				}
+				else {
+					System.out.println(OutOfRangeException);
+				}
+			}
+			catch (Exception e) {
+				System.out.println("Answer must be 1 or 2. Try again.");
+				System.out.println("Error resulting from: " + e);
+				scanner.next();
+			}
+		} while (eType == null);
+		
+		return eType;
+		
 	}
 	
 	/*
@@ -308,9 +354,9 @@ public class Worldbuilder {
 		boolean done = false; 
 		do {
 			try {
-				System.out.println("How many days does it take to traverse this route? (Please enter a number between 0 and 14) ");
+				System.out.println("How many days does it take to traverse this route? (Please enter a number between 1 and 14) ");
 				int a = scanner.nextInt();
-				if (a < 0) {
+				if (a < 1) {
 					System.out.println(OutOfRangeException);
 				}
 				else if (a > 14) {
@@ -409,8 +455,9 @@ public class Worldbuilder {
 	 * C::\Users\USER\Desktop\DM\Countries\Westeros\Routes\The King's Road\The King's Road.txt
 	 * 
 	 */
-	protected static void saveRoute() {
+	protected static boolean saveRoute() {
 		
+		boolean saved = false;
 		boolean done = false;
 		do {
 			try {
@@ -420,6 +467,7 @@ public class Worldbuilder {
 					FileCreator routeFile = new FileCreator(m_route);
 					System.out.println("Route #" + m_route.get_route_id() + " has been saved.");
 					done = true; 
+					saved = true;
 				}
 				else if (a == 0) {
 					System.out.println("Route #" + m_route.get_route_id() + " will not be saved.");
@@ -435,6 +483,7 @@ public class Worldbuilder {
 				scanner.next();
 			}
 		} while (done == false);
+		return saved; 
 	}
 	
 	//////////////////////////////
@@ -501,8 +550,9 @@ public class Worldbuilder {
 	 *  C:\Users\USER\Desktop\DM\Countries\Westeros\Westeros.txt
 	 *  
 	 */
-	protected static void saveCountry () {
+	protected static boolean saveCountry () {
 		
+		boolean saved = false;
 		boolean done = false;
 		do {
 			System.out.println("Do you want to save this country to a file? (Yes = 1/No = 0)");
@@ -511,6 +561,7 @@ public class Worldbuilder {
 				if (a == 1) {
 					FileCreator countryFile = new FileCreator(m_country);
 					System.out.println(m_country.get_country_name() + " has been saved.");
+					saved = true;
 					done = true;
 					break;
 				}
@@ -528,6 +579,7 @@ public class Worldbuilder {
 				scanner.next(); 
 			}
 		} while(done == false);
+		return saved; 
 	}
 
 	/*
@@ -654,8 +706,9 @@ public class Worldbuilder {
 	 *  C:\Users\USER\Desktop\DM\Countries\Westeros\Cities\King's Landing\King's Landing.txt
 	 *  
 	 */
-	protected static void saveCity() {
+	protected static boolean saveCity() {
 		
+		boolean saved = false;
 		boolean done = false;
 		
 		do {
@@ -663,9 +716,10 @@ public class Worldbuilder {
 			try {
 				int save = scanner.nextInt(); 
 				if (save == 1) {
-					FileCreator cityFile = new FileCreator(m_city);
+					m_city.autoSave();
 					System.out.println(m_city.get_name() + " has been saved.");
 					done = true;
+					saved = true; 
 					break;
 				}
 				else if (save == 0) {
@@ -682,6 +736,7 @@ public class Worldbuilder {
 				scanner.next(); 
 			}
 		} while(done == false);
+		return saved;
 	}
 	
 	/*
@@ -708,43 +763,50 @@ public class Worldbuilder {
 			
 			try {
 				
-				System.out.println("Do you want to delete " + article + " building? (Yes = 1/ No = 0)");
-				int a = scanner.nextInt(); 
-				n++;
-				
-				if (a == 1) {
-					System.out.println("Which building do you want to delete?");
-					int x = 1;
-					for (Object i: m_city.get_buildings()) {
-						System.out.print(x + ") " + i + "\n");
-						x++;
-					}
-					System.out.println("Enter the number of the building you want to delete.");
-					int b = scanner.nextInt(); 
-					
-					if (b > m_city.get_buildings().size()) {
-						System.out.println(OutOfRangeException);
-					}
-					else if ( b < 0) {
-						System.out.println(OutOfRangeException);
-					}
-					else {
-						String building = "";
-						for (int y = 0; y < m_city.get_buildings().size(); y++) {
-							if ( (y+1) == b) {
-								building = m_city.get_buildings().get(y).toString();
-								m_city.delete_building(building);
-							}
-						}
-						System.out.println(building + " has been deleted from " + m_city.get_name());
-					}
-				}
-				else if (a == 0) {
-					System.out.println("Okay, no " + adj + " buildings will be deleted.");
+				if (m_city.get_buildings().size() == 0) {
+					System.out.println("There are no buildings left in " + m_city.get_name());
 					done = true;
+					continue; 
 				}
 				else {
-					System.out.println(OneOrZeroException);
+					System.out.println("Do you want to delete " + article + " building? (Yes = 1/ No = 0)");
+					int a = scanner.nextInt(); 
+					n++;
+					
+					if (a == 1) {
+						System.out.println("Which building do you want to delete?");
+						int x = 1;
+						for (Object i: m_city.get_buildings()) {
+							System.out.print(x + ") " + i + "\n");
+							x++;
+						}
+						System.out.println("Enter the number of the building you want to delete.");
+						int b = scanner.nextInt(); 
+						
+						if (b > m_city.get_buildings().size()) {
+							System.out.println(OutOfRangeException);
+						}
+						else if (b < 1) {
+							System.out.println(OutOfRangeException);
+						}
+						else {
+							String building = "";
+							for (int y = 0; y < m_city.get_buildings().size(); y++) {
+								if ( (y+1) == b) {
+									building = m_city.get_buildings().get(y).toString();
+									m_city.delete_building(building);
+								}
+							}
+							System.out.println(building + " has been deleted from " + m_city.get_name());
+						}
+					}
+					else if (a == 0) {
+						System.out.println("Okay, no " + adj + " buildings will be deleted.");
+						done = true;
+					}
+					else {
+						System.out.println(OneOrZeroException);
+					}
 				}
 			}
 			catch (Exception e) {

@@ -20,10 +20,10 @@ public class FileCreator {
 	public FileCreator (Monster monster) {
 		String countryName = monster.get_country().get_country_name();
 		String encounterName = monster.get_encounter().get_name();
-		System.out.println(countryName + " -- " + encounterName);
+		//System.out.println(countryName + " -- " + encounterName);
 		if (monster.get_c_host() != null) {
-			String cityName = monster.get_c_host().get_name();
-			System.out.println(cityName);
+			String cityName = monster.get_encounter().get_city().get_name();
+			//System.out.println(cityName);
 			File dir = new File("C:\\Users\\Fusion360\\Desktop\\DM\\Countries\\" + countryName + "\\Cities\\" + cityName + "\\Encounters\\" + encounterName + "\\Enemies\\" + monster.get_name());
 			dir.mkdirs();
 			open_file ("C:\\Users\\Fusion360\\Desktop\\DM\\Countries\\" + countryName + "\\Cities\\" + cityName + "\\Encounters\\" + encounterName + "\\Enemies\\" + monster.get_name() + "\\" + monster.get_name() + ".txt");
@@ -32,8 +32,8 @@ public class FileCreator {
 			close_file(); 
 		}
 		else if (monster.get_r_host() != null) {
-			String routeName = monster.get_r_host().get_name();
-			System.out.println(routeName);
+			String routeName = monster.get_encounter().get_route().get_name();
+			//System.out.println(routeName);
 			File dir = new File("C:\\Users\\Fusion360\\Desktop\\DM\\Countries\\" + countryName + "\\Routes\\" + routeName + "\\Encounters\\" + encounterName + "\\Enemies\\" + monster.get_name());
 			dir.mkdirs();
 			open_file ("C:\\Users\\Fusion360\\Desktop\\DM\\Countries\\" + countryName + "\\Routes\\" + routeName + "\\Encounters\\" + encounterName + "\\Enemies\\" + monster.get_name() + "\\" + monster.get_name() + ".txt");
@@ -108,8 +108,9 @@ public class FileCreator {
 		
 		File dir = new File("C:\\Users\\Fusion360\\Desktop\\DM\\Countries\\" + city.get_country().get_country_name() + "\\Cities\\" + city.get_name());
 		
+		@SuppressWarnings("unused")
 		boolean created = dir.mkdirs(); 
-		System.out.println(dir + "\n" + created);
+		//System.out.println(dir + "\n" + created);
 		if (!dir.exists()) {
 			FileWriter f = new FileWriter ("C:\\Users\\Fusion360\\Desktop\\DM\\Countries\\" + city.get_country().get_country_name() + "\\Cities\\" + city.get_name()+ "\\" + city.get_name () + ".txt");
 			try {

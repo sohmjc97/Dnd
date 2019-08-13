@@ -50,27 +50,11 @@ public class routeEditor extends WorldEditor {
 		
 		output = output + "1) " + "Return to Country Editor \n";
 		output = output + "2) " + "Add new route \n";
-		if (routeCount >= 1) {
-			output = output + "3) " + m_country.get_routes().get(0).get_name() +"\n";
+		
+		for (int i = 0; i< routeCount; i++) {
+			output = output + (i+3) + ") " + m_country.get_routes().get(i).get_name() + "\n"; 
 		}
-		if (routeCount >= 2) {
-			output = output + "4) " + m_country.get_routes().get(1).get_name()+ "\n";
-		}
-		if (routeCount >= 3) {
-			output = output + "5) " + m_country.get_routes().get(2).get_name() + "\n";
-		}
-		if (routeCount >= 4) {
-			output = output + "6) " + m_country.get_routes().get(3).get_name()+ "\n";
-		}
-		if (routeCount >= 5) {
-			output = output + "7) " + m_country.get_routes().get(4).get_name()+ "\n";
-		}
-		if (routeCount >= 6) {
-			output = output + "8) " + m_country.get_routes().get(6).get_name()+ "\n";
-		}
-		/*
-		 * Add additional lines if you plan on having a country with more than 6 cities
-		 */
+
 		System.out.println(output);  
 	}
 	
@@ -83,51 +67,31 @@ public class routeEditor extends WorldEditor {
 		
 		boolean done = false;
 		//System.out.println("Parsing choices...");
-		switch (choice) {
-			case 1:
-				System.out.println("Exiting Route Editor...");
-				done = true;
-				break;
-			case 2:
-				System.out.println("Entering Route Constructor...");
-				//scanner.nextLine(); 
-				Worldbuilder.contructRoutes(); 
-				int i = m_country.get_routes().size(); 
-				if (i > 0) {
-					m_route = m_country.get_routes().get(i-1);
-					m_route.get_origin().get_routes().add(m_route);
-					m_route.get_destination().get_routes().add(m_route);
-				}
-				else {
-					System.out.println("You need at least 2 cities to build a route. Try building some more cities first.");
-				}
-				break;
-			case 3:
-				m_route = m_country.get_routes().get(0); 
-				parseRouteEdits(); 
-				break;
-			case 4:
-				m_route = m_country.get_routes().get(1);
-				parseRouteEdits(); 
-				break;
-			case 5:
-				m_route = m_country.get_routes().get(2);
-				parseRouteEdits(); 
-				break;
-			case 6:
-				m_route = m_country.get_routes().get(3);
-				parseRouteEdits(); 
-				break;
-			case 7:
-				m_route = m_country.get_routes().get(4);
-				parseRouteEdits(); 
-				break;
-			case 8:
-				m_route = m_country.get_routes().get(5);
-				parseRouteEdits(); 
-				break;
+		
+		if (choice == 1) {
+			System.out.println("Exiting Route Editor...");
+			done = true;
 		}
-		return done; 
+		else if (choice == 2) {
+			System.out.println("Entering Route Constructor...");
+			//scanner.nextLine(); 
+			Worldbuilder.contructRoutes(); 
+			int i = m_country.get_routes().size(); 
+			if (i > 0) {
+				m_route = m_country.get_routes().get(i-1);
+				m_route.get_origin().get_routes().add(m_route);
+				m_route.get_destination().get_routes().add(m_route);
+			}
+			else {
+				System.out.println("You need at least 2 cities to build a route. Try building some more cities first.");
+			}
+		}
+		else {
+			m_route = m_country.get_routes().get(choice - 3); 
+			parseRouteEdits(); 
+		}
+		return done;
+		
 	}
 	
 	/*
@@ -216,53 +180,21 @@ public class routeEditor extends WorldEditor {
 				done = deleteRoute(); 
 				break; 
 			case 8:
-				Worldbuilder.saveRoute();
+				boolean saved = Worldbuilder.saveRoute();
+				if (saved) {
+					for (Encounter e: m_route.get_all_encounters()) {
+						for (Monster m: e.get_enemies()) {
+							m.autoSave();
+						}
+						e.autoSave();
+					}
+				}
 				break;
 			case 9:
 				done = true; 
 				break; 
 		}
 		return done; 
-	}
-	
-	/*
-	 * Takes user input on which encounters to delete from this Route and then removes those encounters
-	 */
-	private static void deleteEncounters () {
-		
-		boolean done = false; 
-		do {
-			try {
-				int n = 0; 
-				System.out.println("Which encounter do you want to delete?");
-				for (int i = 0; i < m_route.get_day_encounters().size(); i++) {
-					System.out.println((i+1) +") " + m_route.get_day_encounters().get(i).get_encounter_name());
-					n = i+1; 
-				}
-				n++; 
-				System.out.println(n + ")  Return to Route Editor");
-				System.out.println("Type the number of the encounter you want to delete.");
-				int a = scanner.nextInt();
-				if (a < 1) {
-					System.out.println(OutOfRangeException);
-				}
-				else if (a > (m_route.get_day_encounters().size()+2)) {
-					System.out.println(OutOfRangeException);
-				}
-				else if (a == n) {
-					done = true; 
-				}
-				else {
-					System.out.println("Removing Encounter #" + a + "...");
-					m_route.get_day_encounters().remove(a-1);
-				}
-			}
-			catch (Exception e) {
-				System.out.println(MustBeIntException);
-				//System.out.println("Error resulting from:  " + e);
-				scanner.next(); 
-			}
-		}while (done == false);
 	}
 	
 	/*

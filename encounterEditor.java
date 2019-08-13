@@ -27,7 +27,7 @@ public class encounterEditor extends WorldEditor {
 				if (a < 1) {
 					System.out.println(OutOfRangeException);
 				}
-				else if (a > (m_route.get_day_encounters().size() + 2)) {
+				else if (a > (m_route.get_all_encounters().size() + 2)) {
 					System.out.println(OutOfRangeException);
 				}
 				else {
@@ -52,7 +52,7 @@ public class encounterEditor extends WorldEditor {
 		r_host = null; 
 		
 		System.out.println("----- Encounter Editor -----");
-		System.out.println("Which Encounter would you like to edit?");
+		//System.out.println("Which Encounter would you like to edit?");
 		
 		boolean done = false;
 		do {
@@ -63,7 +63,7 @@ public class encounterEditor extends WorldEditor {
 				if (a < 1) {
 					System.out.println(OutOfRangeException);
 				}
-				else if (a > (m_city.get_encounters().size() + 2)) {
+				else if (a > (m_city.get_all_encounters().size() + 2)) {
 					System.out.println(OutOfRangeException);
 				}
 				else {
@@ -86,32 +86,16 @@ public class encounterEditor extends WorldEditor {
 	 */
 	private static void listEncounterChoices(Route route) {
 		String output = ""; 
-		int encounterCount = m_route.get_day_encounters().size(); 
+		int encounterCount = m_route.get_all_encounters().size(); 
 		System.out.println("Encounter Count: " + encounterCount);
 		
 		output = output + "1) " + "Return to Route Editor \n";
 		output = output + "2) " + "Add new encounter \n";
-		if (encounterCount >= 1) {
-			output = output + "3) " + m_route.get_day_encounters().get(0).get_name() +"\n";
+		
+		for (int i = 0; i< encounterCount; i++) {
+			output = output + (i+3) + ") " + m_route.get_all_encounters().get(i).get_name() + "\n"; 
 		}
-		if (encounterCount >= 2) {
-			output = output + "4) " + m_route.get_day_encounters().get(1).get_name()+ "\n";
-		}
-		if (encounterCount >= 3) {
-			output = output + "5) " + m_route.get_day_encounters().get(2).get_name() + "\n";
-		}
-		if (encounterCount >= 4) {
-			output = output + "6) " + m_route.get_day_encounters().get(3).get_name() + "\n";
-		}
-		if (encounterCount >= 5) {
-			output = output + "7) " + m_route.get_day_encounters().get(4).get_name() + "\n";
-		}
-		if (encounterCount >= 6) {
-			output = output + "8) " + m_route.get_day_encounters().get(5).get_name() + "\n";
-		}
-		/*
-		 * Add additional lines if you plan on having a Route with more than 6 encounters 
-		 */
+		
 		System.out.println(output);  
 	}
 	
@@ -123,32 +107,16 @@ public class encounterEditor extends WorldEditor {
 	 */
 	private static void listEncounterChoices(City city) {
 		String output = ""; 
-		int encounterCount = m_city.get_encounters().size(); 
+		int encounterCount = m_city.get_all_encounters().size(); 
 		System.out.println("Encounter Count: " + encounterCount);
 		
 		output = output + "1) " + "Return to City Editor \n";
 		output = output + "2) " + "Add new encounter \n";
-		if (encounterCount >= 1) {
-			output = output + "3) " + m_city.get_encounters().get(0).get_name() +"\n";
+		
+		for (int i = 0; i< encounterCount; i++) {
+			output = output + (i+3) + ") " + m_city.get_all_encounters().get(i).get_name() + "\n"; 
 		}
-		if (encounterCount >= 2) {
-			output = output + "4) " + m_city.get_encounters().get(1).get_name() + "\n";
-		}
-		if (encounterCount >= 3) {
-			output = output + "5) " + m_city.get_encounters().get(2).get_name() + "\n";
-		}
-		if (encounterCount >= 4) {
-			output = output + "6) " + m_city.get_encounters().get(3).get_name() + "\n";
-		}
-		if (encounterCount >= 5) {
-			output = output + "7) " + m_city.get_encounters().get(4).get_name() + "\n";
-		}
-		if (encounterCount >= 6) {
-			output = output + "8) " + m_city.get_encounters().get(5).get_name() + "\n";
-		}
-		/*
-		 * Add additional lines if you plan on having a Route with more than 6 encounters 
-		 */
+
 		System.out.println(output);  
 	}
 	
@@ -161,103 +129,44 @@ public class encounterEditor extends WorldEditor {
 	private static boolean parseEncounterChoices(int choice) {
 		boolean done = false;
 		//System.out.println("Parsing choices...");
-		switch (choice) {
-			case 1:
-				System.out.println("Exiting Encounter Editor...");
-				done = true;
-				break;
-			case 2:
-				System.out.println("Entering Encounter Constructor...");
-				//scanner.nextLine(); 
-				
-				if (c_host == null) {
-					Worldbuilder.addEncounters(m_route);
-					int i = m_route.get_day_encounters().size(); 
-					m_encounter = m_route.get_day_encounters().get(i-1);
-				}
-				else if (r_host == null) {
-					Worldbuilder.addEncounters(m_city);
-					int i = m_city.get_encounters().size();
-					m_encounter = m_city.get_encounters().get(i-1); 
-				}
-				else {
-					System.out.println("Program encountered a problem.");
-				}
-				break;
-			case 3:
-				if (c_host == null) {
-					m_encounter = m_route.get_day_encounters().get(0); 
-				}
-				else if (r_host == null) {
-					m_encounter = m_city.get_encounters().get(0);
-				}
-				else {
-					System.out.println("Program encountered a problem.");
-				}
-				getEncounterEdits(); 
-				break;
-			case 4:
-				if (c_host == null) {
-					m_encounter = m_route.get_day_encounters().get(1); 
-				}
-				else if (r_host == null) {
-					m_encounter = m_city.get_encounters().get(1);
-				}
-				else {
-					System.out.println("Program encountered a problem.");
-				}				
-				getEncounterEdits(); 
-				break;
-			case 5:
-				if (c_host == null) {
-					m_encounter = m_route.get_day_encounters().get(2); 
-				}
-				else if (r_host == null) {
-					m_encounter = m_city.get_encounters().get(2);
-				}
-				else {
-					System.out.println("Program encountered a problem.");
-				}				
-				getEncounterEdits(); 
-				break;
-			case 6:
-				if (c_host == null) {
-					m_encounter = m_route.get_day_encounters().get(3); 
-				}
-				else if (r_host == null) {
-					m_encounter = m_city.get_encounters().get(3);
-				}
-				else {
-					System.out.println("Program encountered a problem.");
-				}				
-				getEncounterEdits(); 
-				break;
-			case 7:
-				if (c_host == null) {
-					m_encounter = m_route.get_day_encounters().get(4); 
-				}
-				else if (r_host == null) {
-					m_encounter = m_city.get_encounters().get(4);
-				}
-				else {
-					System.out.println("Program encountered a problem.");
-				}				
-				getEncounterEdits(); 
-				break;
-			case 8:
-				if (c_host == null) {
-					m_encounter = m_route.get_day_encounters().get(5); 
-				}
-				else if (r_host == null) {
-					m_encounter = m_city.get_encounters().get(5);
-				}
-				else {
-					System.out.println("Program encountered a problem.");
-				}				
-				getEncounterEdits(); 
-				break;
+		
+		if (choice == 1) {
+			done = true;
+		}
+		else if (choice == 2) {
+			System.out.println("Entering Encounter Constructor...");
+			//scanner.nextLine(); 
+			
+			if (c_host == null) {
+				Worldbuilder.addEncounters(m_route);
+				int i = m_route.get_all_encounters().size(); 
+				m_encounter = m_route.get_all_encounters().get(i-1);
+				m_encounter.autoSave();
+			}
+			else if (r_host == null) {
+				Worldbuilder.addEncounters(m_city);
+				int i = m_city.get_all_encounters().size();
+				m_encounter = m_city.get_all_encounters().get(i-1); 
+				m_encounter.autoSave();
+			}
+			else {
+				System.out.println("Program encountered a problem.");
+			}
+		}
+		else {
+			if (c_host == null) {
+				m_encounter = m_route.get_all_encounters().get(choice - 3); 
+			}
+			else if (r_host == null) {
+				m_encounter = m_city.get_all_encounters().get(choice - 3);
+			}
+			else {
+				System.out.println("Program encountered a problem.");
+			}
+			getEncounterEdits(); 
 		}
 		return done; 
+		
 	}
 	
 	/*
@@ -298,7 +207,7 @@ public class encounterEditor extends WorldEditor {
 		String output = "";
 		output = output + "1) Name (Unavailable) \n";
 		output = output + "2) Description \n";
-		output = output + "3) Host \n";
+		output = output + "3) Host Location \n";
 		output = output + "4) Enemies \n";
 		output = output + "5) View Encounter Details \n";
 		output = output + "6) Delete Encounter \n";
@@ -338,13 +247,18 @@ public class encounterEditor extends WorldEditor {
 				monsterEditor.edit(); 
 				break; 
 			case 5:
-				System.out.println(m_encounter.get_all_info());
+				m_encounter.list_all_info();
 				break;
 			case 6:
 				done = delete_encounter(); 
 				break; 
 			case 7:
-				saveEncounter(); 
+				boolean saved = saveEncounter(); 
+				if (saved) {
+					for (Monster m: m_encounter.get_enemies()) {
+						m.autoSave();
+					}
+				}
 				break;
 			case 8:
 				done = true; 
@@ -376,7 +290,8 @@ public class encounterEditor extends WorldEditor {
 						done = true;
 					}
 					catch (Exception e) {
-						System.out.println(GenericException + "\n" + e);
+						System.out.println(GenericException);
+						//System.out.println("Error resulting from: " + e);
 						scanner.next();
 					}
 				}
@@ -431,108 +346,6 @@ public class encounterEditor extends WorldEditor {
 	}
 	
 	/*
-	 * Gets users' input on whether they want to add and/or delete enemies from the given Encounter 
-	 */
-	private static void editEnemies() {
-		
-		boolean done = false; 
-		do {
-			int i = 1;
-			for (Monster enemy: m_encounter.get_enemies()) {
-				System.out.println( i + ") " + enemy.get_name()); 
-				i++; 
-			}
-
-			System.out.println("Do you want to add enemies to this Encounter? (Yes = 1/ No = 0)");
-			try {
-				int a = scanner.nextInt();
-				if (a == 1) {
-					
-					System.out.println("Enter the Monster's Name: ");
-					scanner.nextLine();
-					String name = scanner.nextLine();
-					m_encounter.add_enemy(name);
-					
-				}
-				else if (a == 0) {
-					System.out.println("No new enemies will be added.");
-					deleteEnemies(); 
-					done = true; 
-				}
-				else {
-					System.out.println(OneOrZeroException);
-				}
-			}
-			catch (Exception e) {
-				System.out.println(MustBeIntException);
-				//System.out.println("Error resulting from:  " + e);
-				scanner.next(); 
-			}
-			
-		} while (done == false);
-		
-	}
-	
-	/*
-	 * Internal function of editEnemies, which gets users' input on which if any enemies should be deleted
-	 * from the current Encounter and deletes or abstains accordingly 
-	 */
-	private static void deleteEnemies() {
-		
-		boolean done = false;
-		do {
-			
-			if (m_encounter.get_enemies().size() == 0) {
-				System.out.println("There are no enemies left to delete.");
-				done = true; 
-				continue; 
-			}
-			
-			int i = 1;
-			for (Monster enemy: m_encounter.get_enemies()) {
-				System.out.println( i + ") " + enemy.get_name()); 
-				i++; 
-			}
-			System.out.println("Do you want to delete an enemy? (Yes = 1/ No = 0)");
-			try {
-				int a = scanner.nextInt();
-				if (a == 1) {
-					
-					i = 1;
-					for (Monster enemy: m_encounter.get_enemies()) {
-						System.out.println( i + ") " + enemy.get_name()); 
-						i++; 
-					}
-					System.out.println("Enter the number of the enemy you want to delete.");
-					
-					int b = scanner.nextInt();
-					
-					Monster m = m_encounter.get_enemies().remove(b-1);
-					
-					System.out.println(m.get_name() + " has been deleted."); 
-					
-					m = null; 
-					 
-				}
-				else if (a == 0 ) {
-					System.out.println("No further enemies will be deleted.");
-					done = true; 
-				}
-				else {
-					System.out.println(OutOfRangeException);
-				}
-			}
-			catch(Exception e) {
-				System.out.println(MustBeIntException);
-				//System.out.println("Error resulting from:  " + e);
-				scanner.next(); 
-			}
-			
-		} while(done == false);
-		
-	}
-	
-	/*
 	 * Verifies that the user wants to delete this Encounter and follows through accordingly 
 	 */
 	private static boolean delete_encounter () {
@@ -546,14 +359,14 @@ public class encounterEditor extends WorldEditor {
 				if (a == 1) {
 					
 					if (get_r_host() == null) {
-						m_encounter.get_city().m_encounters.remove(m_encounter);
+						m_encounter.get_city().deleteEncounter(m_encounter);
 						m_encounter = null;
 						done = true;
 						deleted = true;
 						System.out.println("The encounter was successfully deleted!");
 					}
 					else if (get_c_host() == null) {
-						m_encounter.get_route().get_day_encounters().remove(m_encounter);
+						m_encounter.get_route().deleteEncounter(m_encounter);
 						m_encounter = null; 
 						done = true; 
 						deleted = true;
@@ -584,17 +397,19 @@ public class encounterEditor extends WorldEditor {
 	/*
 	 * Gets user input on whether or not to save this Encounter to a file and follows through accordingly 
 	 */
-	private static void saveEncounter () {
+	public static boolean saveEncounter () {
 		
+		boolean saved = true; 
 		boolean done = false;
 		do {
 			System.out.println("Do you want to save " + m_encounter.get_name() + " to a file? (Yes = 1/ No = 0)");
 			try {
 				int a = scanner.nextInt();
 				if (a == 1) {
-					FileCreator encounter_file = new FileCreator(m_encounter);
+					m_encounter.autoSave(); 
 					System.out.println(m_encounter.get_name() + " has been saved to a file.");
 					done = true;
+					saved = true;
 				}
 				else if (a == 0) {
 					System.out.println(m_encounter.get_name() + " will not be saved.");
@@ -610,8 +425,13 @@ public class encounterEditor extends WorldEditor {
 				scanner.next(); 
 			}
 		} while (done == false);
+		return saved; 
 	}
 	
+	/*
+	 * Gets user input as to whether the Encounter should be moved to a new Host Location,
+	 * which Host Location if so, and executes the move
+	 */
 	private static boolean switchHost () {
 		
 		boolean switched = false;
@@ -643,6 +463,9 @@ public class encounterEditor extends WorldEditor {
 		return switched;
 	}
 	
+	/*
+	 * Gets user input as to which Route or City the Encounter should be moved to
+	 */
 	private static void getNewLocation () {
 		
 		boolean done = false;
@@ -653,13 +476,21 @@ public class encounterEditor extends WorldEditor {
 			System.out.println("Country: " + m_encounter.get_country().get_country_name());
 			System.out.println("Cities: " + m_encounter.get_country().get_cities()); */
 			for (City city: m_encounter.get_country().get_cities()) {
-				System.out.println(n + ") " + city.get_name());
+				String encounters = "" ;
+				for (Encounter e: city.get_all_encounters()) {
+					encounters = encounters + " :: " + e.get_name();
+				}
+				System.out.println(n + ") " + city.get_name() + encounters);
 				n++;
 			}
 			int m = n;
 			System.out.println("---Routes---");
 			for (Route route: m_encounter.get_country().get_routes()) {
-				System.out.println(m + ") " + route.get_name());
+				String encounters = "" ;
+				for (Encounter e: route.get_all_encounters()) {
+					encounters = encounters + " :: " + e.get_name();
+				}
+				System.out.println(m + ") " + route.get_name() + encounters);
 				m++;
 			}
 			System.out.println("Type the number of the new location: ");
@@ -675,10 +506,24 @@ public class encounterEditor extends WorldEditor {
 				else {
 					if (a < n) {
 						City choice = m_encounter.get_country().get_cities().get(a-1);
+						System.out.println("You have chosen " + choice.get_name());
+						for (Encounter e: choice.get_all_encounters()) {
+							if (e.get_name() == m_encounter.get_name()) {
+								System.out.println(choice.get_name() + " already has this encounter. Host was not changed"); 
+								continue;
+							}
+						}
 						m_encounter.change_host(choice);
 					}
 					else {
-						Route choice = m_encounter.get_country().get_routes().get(m-n-1);
+						Route choice = m_encounter.get_country().get_routes().get(a-n);
+						System.out.println("You have chosen " + choice.get_name());
+						for (Encounter e: choice.get_all_encounters()) {
+							if (e.get_name() == m_encounter.get_name()) {
+								System.out.println(choice.get_name() + " already has this encounter. Host was not changed."); 
+								continue;
+							}
+						}
 						m_encounter.change_host(choice);
 					}
 					m_encounter = null; 
