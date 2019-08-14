@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.util.*;
 
 import Dnd.Being.DamageTypes;
+import Dnd.Being.StatusCondition;
 import Dnd.Country.CityType;
 import Dnd.Country.TerrainType;
 import Dnd.Encounter.EncounterType; 
@@ -556,7 +557,8 @@ public class WorldEditor extends Worldbuilder {
 			else {
 				//System.out.println(enemy.get_name() + "'S File: \n" + enemy_file + "\n");
 				populateEnemyVariables(enemy, enemy_file); 
-				enemy.list_all_stats();
+				//enemy.list_all_stats();
+				System.out.println(enemy.get_name() + " successfully loaded.");
 			}
 			
 		}
@@ -676,6 +678,60 @@ public class WorldEditor extends Worldbuilder {
 					
 				}
 			}
+			
+			if (line.contains("Immune to Damage Types")) {
+				
+				String list = line.split(": ")[1];
+				String[] each = list.split(",");
+				for (String item: each) {
+					item = item.replace("[", "").strip();
+					item = item.replace("]", "").strip();
+					for (DamageTypes i: DamageTypes.values()) {
+						if (item.equalsIgnoreCase(i.toString())) {
+							enemy.add_dmg_immunity(i);
+						}
+					}
+					
+				}
+				
+			}
+			
+			if (line.contains("Immune to Conditions")) {
+				
+				String list = line.split(": ")[1];
+				String[] each = list.split(",");
+				for (String item: each) {
+					item = item.replace("[", "").strip();
+					item = item.replace("]", "").strip();
+					for (StatusCondition i: StatusCondition.values()) {
+						if (item.equalsIgnoreCase(i.toString())) {
+							enemy.add_condition_immunity(i);
+						}
+					}
+					
+				}
+				
+			}
+			
+			if (line.contains("Status Conditions")) {
+				
+				String list = line.split(": ")[1];
+				String[] each = list.split(",");
+				for (String item: each) {
+					item = item.replace("[", "").strip();
+					item = item.replace("]", "").strip();
+					for (StatusCondition i: StatusCondition.values()) {
+						if (item.equalsIgnoreCase(i.toString())) {
+							enemy.add_status_condition(i);
+						}
+					}
+					
+				}
+				
+			}
+			
+			
+			
 		}
 		String[] inventory = enemy_file.split("------- Inventory --------")[1].split("\n");
 		for (String item: inventory) {
@@ -841,10 +897,10 @@ public class WorldEditor extends Worldbuilder {
 			list_country_edits(); 
 			 try {
 				 int a = scanner.nextInt();
-				 if (a <= 0) {
+				 if (a < 1) {
 					 System.out.println(OutOfRangeException);
 				 }
-				 else if (a > 10) {
+				 else if (a > 9) {
 					 System.out.println(OutOfRangeException);
 				 }
 				 else {
@@ -866,16 +922,15 @@ public class WorldEditor extends Worldbuilder {
 	 */
 	private static void list_country_edits() {
 		String output = "";
-		output = output + "1) Name (Note: if you change this, a new file will be created. \n";
-		output = output + "2) Description \n";
-		output = output + "3) Age \n";
-		output = output + "4) Population \n";
-		output = output + "5) Ruler \n";
-		output = output + "6) Cities \n";
-		output = output + "7) Routes \n";
-		output = output + "8) View Country Details \n";
-		output = output + "9) Save Edits (Note: this will save everything within the Country) \n";
-		output = output + "10) Exit Editor \n";
+		output = output + "1) Description \n";
+		output = output + "2) Age \n";
+		output = output + "3) Population \n";
+		output = output + "4) Ruler \n";
+		output = output + "5) Cities \n";
+		output = output + "6) Routes \n";
+		output = output + "7) View Country Details \n";
+		output = output + "8) Save Edits (Note: this will save everything within the Country) \n";
+		output = output + "9) Exit Editor \n";
 		System.out.println(output);
 	}
 	
@@ -889,41 +944,37 @@ public class WorldEditor extends Worldbuilder {
 		boolean done = false;
 		switch (choice) {
 			case 1:
-				System.out.println("Name editing currently now allowewd.");
-				//m_country.set_country_name(name);
-				break; 
-			case 2:
 				System.out.println("What should the new description be?");
 				scanner.nextLine(); 
 				String descrip = scanner.nextLine();
 				m_country.set_country_description(descrip);
 				System.out.println("Description has been changed to: \n" + m_country.get_country_description() + "\n");
 				break; 
-			case 3:
+			case 2:
 				Worldbuilder.constructCountryAge(); 
 				System.out.println("Age has been changed to: " + m_country.get_country_age() + "\n");
 				break; 
-			case 4:
+			case 3:
 				Worldbuilder.constructCountryPop();
 				System.out.println("Population has been changed to: " + m_country.get_population() + "\n");
 				break; 
-			case 5:
+			case 4:
 				System.out.println("Who should the new ruler be?");
 				scanner.nextLine(); 
 				String ruler = scanner.nextLine();
 				m_country.set_ruler(ruler);
 				System.out.println("Ruler has been changed to: " + m_country.get_ruler() + "\n");
 				break; 
-			case 6:
+			case 5:
 				cityEditor.edit(); 
 				break;
-			case 7:
+			case 6:
 				routeEditor.edit();
 				break; 
-			case 8:
+			case 7:
 				m_country.list_all_info();
 				break;
-			case 9:
+			case 8:
 				//Note: Saving the Country saves everything inside of it 
 				//This is a master save 
 				boolean saved = Worldbuilder.saveCountry();
@@ -949,7 +1000,7 @@ public class WorldEditor extends Worldbuilder {
 					}
 				}
 				break; 
-			case 10:
+			case 9:
 				done = true;
 				break; 
 		}

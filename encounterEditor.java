@@ -183,7 +183,7 @@ public class encounterEditor extends WorldEditor {
 				if (a < 1) {
 					System.out.println(OutOfRangeException);
 				}
-				else if (a > 8) {
+				else if (a > 7) {
 					System.out.println(OutOfRangeException);
 				}
 				else {
@@ -205,14 +205,13 @@ public class encounterEditor extends WorldEditor {
 	private static void listEncounterEdits() {
 		System.out.println("What changes do you want to make to " + m_encounter.get_name() + "?");
 		String output = "";
-		output = output + "1) Name (Unavailable) \n";
+		output = output + "1) Return to Encounter Selection \n";
 		output = output + "2) Description \n";
 		output = output + "3) Host Location \n";
 		output = output + "4) Enemies \n";
 		output = output + "5) View Encounter Details \n";
-		output = output + "6) Delete Encounter \n";
-		output = output + "7) Save Encounter \n";
-		output = output + "8) Return to Encounter Choices \n";
+		output = output + "6) Save Encounter \n";
+		output = output + "7) Delete Encounter \n";
 		System.out.println(output); 
 	}
 	
@@ -226,7 +225,8 @@ public class encounterEditor extends WorldEditor {
 		boolean done = false;
 		switch (choice) {
 			case 1:
-				System.out.println("Name editing is not yet available.");
+				System.out.println("Returning to Encounter Selection...");
+				done = true;
 				break;
 			case 2:
 				edit_description(); 
@@ -250,18 +250,15 @@ public class encounterEditor extends WorldEditor {
 				m_encounter.list_all_info();
 				break;
 			case 6:
-				done = delete_encounter(); 
-				break; 
-			case 7:
 				boolean saved = saveEncounter(); 
 				if (saved) {
 					for (Monster m: m_encounter.get_enemies()) {
 						m.autoSave();
 					}
 				}
-				break;
-			case 8:
-				done = true; 
+				break; 
+			case 7:
+				done = delete_encounter(); 
 				break; 
 		}
 		return done; 

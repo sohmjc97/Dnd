@@ -22,11 +22,12 @@ public class Main {
 				else if (a == 2) {
 					Worldbuilder.build(); 
 					
-					System.out.println("# of countries: " + Worldbuilder.get_country_count());
+					/*System.out.println("# of countries: " + Worldbuilder.get_country_count());
 					System.out.println("Countries: " + Worldbuilder.get_country_list());
 					System.out.println("Total # of cities: " + Worldbuilder.get_global_city_count());
 					System.out.println("Total Cities: " + Worldbuilder.get_global_city_list());
 					System.out.println("Total # of routes: " + Route.get_route_count());
+					*/
 					done = true;
 				}
 				else if (a == 3) {
@@ -46,7 +47,7 @@ public class Main {
 		 * These run at end to give info about the state of the last active 
 		 * City and Route for debugging purposes. 
 		 */
-		try {
+		/*try {
 			System.out.println(WorldEditor.m_city.get_all_info());
 		}
 		catch (NullPointerException e) {
@@ -59,6 +60,7 @@ public class Main {
 			System.out.println("No Route was active, so no info could be returned.");
 		}
 		scanner.close();
+		*/
 	}
 
 }

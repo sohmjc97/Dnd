@@ -3,6 +3,7 @@ package Dnd;
 import java.util.ArrayList;
 
 import Dnd.Being.DamageTypes;
+import Dnd.Being.StatusCondition;
 
 public class monsterEditor extends encounterEditor{
 	/*
@@ -37,7 +38,7 @@ public class monsterEditor extends encounterEditor{
 			}
 			catch (Exception e) {
 				System.out.println(MustBeIntException);
-				//System.out.println("Error resulting from:  " + e);
+				System.out.println("Error resulting from:  " + e);
 				scanner.next(); 
 			}
 		} while (done == false);
@@ -104,7 +105,7 @@ public class monsterEditor extends encounterEditor{
 				if (a < 1) {
 					System.out.println(OutOfRangeException);
 				}
-				else if (a > 10) {
+				else if (a > 9) {
 					System.out.println(OutOfRangeException);
 				}
 				else {
@@ -126,16 +127,15 @@ public class monsterEditor extends encounterEditor{
 	private static void listEnemyEdits () {
 		System.out.println("What changes do you want to make to " + m_enemy.get_name() + "?");
 		String output = "";
-		output = output + "1) Name (Unavailable) \n";
+		output = output + "1) Return to Enemy Selection \n";
 		output = output + "2) Description \n";
 		output = output + "3) Host \n";
 		output = output + "4) Stats \n";
 		output = output + "5) Items \n";
 		output = output + "6) View Enemy Details \n";
-		output = output + "7) Delete Enemy \n";
-		output = output + "8) Save Enemy \n";
-		output = output + "9) Create Copies \n";
-		output = output + "10) Return to Enemy Selection \n";
+		output = output + "7) Save Enemy \n";
+		output = output + "8) Create Copies \n";
+		output = output + "9) Delete Enemy \n";
 		System.out.println(output); 
 	}
 	
@@ -149,7 +149,8 @@ public class monsterEditor extends encounterEditor{
 		switch (choice) {
 		
 		case 1: 
-			System.out.println("Name editing is not yet available.");
+			System.out.println("Returning to Enemy Selection...");
+			done = true;
 			break;
 		case 2:
 			scanner.nextLine(); 
@@ -173,19 +174,14 @@ public class monsterEditor extends encounterEditor{
 			System.out.println(m_enemy.get_all_stats());
 			break;
 		case 7:
-			done = deleteEnemy();
-			break;
-		case 8:
 			saveEnemy();
 			break;
-		case 9:
+		case 8:
 			copyMonster(); 
 			break;
-		case 10:
-			System.out.println("Returning to Enemy Selection...");
-			done = true;
-			break; 
-		
+		case 9:
+			done = deleteEnemy();
+			break;
 		}
 		return done; 
 		
@@ -409,22 +405,25 @@ public class monsterEditor extends encounterEditor{
 	private static void listEnemyStats() {
 		String output = ""; 
 		output = output + "---Enemy Stats---\n";
-		output = output + "1) Level: " + m_enemy.get_lvl() + "\n";
-		output = output + "2) HP: " + m_enemy.get_hp() + "\n";
-		output = output + "3) AC: " + m_enemy.get_ac() + "\n";
-		output = output + "4) XP: " + m_enemy.get_xp() + "\n";
-		output = output + "5) Attack Mod: " + m_enemy.m_attackMod + "\n";
-		output = output + "6) Damage Die: " + m_enemy.get_dmgDie() + "\n";
-		output = output + "7) Number of Damage Die: " + m_enemy.get_numdmgDie() + "\n";
-		output = output + "8) Damage Mod: " + m_enemy.get_dmgMod() + "\n";
-		output = output + "9) Ability Mods: \n";
+		output = output + "1) Return to Previous Menu \n";
+		output = output + "2) Level: " + m_enemy.get_lvl() + "\n";
+		output = output + "3) HP: " + m_enemy.get_hp() + "\n";
+		output = output + "4) AC: " + m_enemy.get_ac() + "\n";
+		output = output + "5) XP: " + m_enemy.get_xp() + "\n";
+		output = output + "6) Attack Mod: " + m_enemy.m_attackMod + "\n";
+		output = output + "7) Damage Die: " + m_enemy.get_dmgDie() + "\n";
+		output = output + "8) Number of Damage Die: " + m_enemy.get_numdmgDie() + "\n";
+		output = output + "9) Damage Mod: " + m_enemy.get_dmgMod() + "\n";
+		output = output + "10) Status Condition: " + m_enemy.get_status_condition() + "\n";
+		output = output + "11) Ability Mods: \n";
 		for (String i: m_enemy.m_abilityMods.keySet()) {
 			output = output + i + ": " + m_enemy.m_abilityMods.get(i) + "\n";
 		}
-		output = output + "10) Weaknesses" + m_enemy.get_weaknesses() + "\n";
-		output = output + "11) Resistances" + m_enemy.get_resistances() + "\n";
-		output = output + "12) Return to Previous Menu \n";
-
+		output = output + "12) Weaknesses" + m_enemy.get_weaknesses() + "\n";
+		output = output + "13) Resistances" + m_enemy.get_resistances() + "\n";
+		output = output + "14) Damage Immunities " + m_enemy.get_dmg_immunities() + "\n";
+		output = output + "15) Condition Immunities " + m_enemy.get_condition_immunities() + "\n";
+		
 		System.out.println(output);
 	}
 	
@@ -442,7 +441,7 @@ public class monsterEditor extends encounterEditor{
 				if (a < 0) {
 					System.out.println(OutOfRangeException);
 				}
-				else if (a > 12) {
+				else if (a > 15) {
 					System.out.println(OutOfRangeException);
 				}
 				else {
@@ -466,45 +465,56 @@ public class monsterEditor extends encounterEditor{
 		
 		boolean done = false; 
 		switch (choice) {
-		
-		case 1: 
+		case 1:
+			done = true;
+			break;
+		case 2: 
 			editLvl();
 			break;
-		case 2:
+		case 3:
 			editHP();
 			break;
-		case 3:
+		case 4:
 			editAC();
 			break;
-		case 4:
+		case 5:
 			editXP();
 			break;
-		case 5:
+		case 6:
 			editAM();
 			break;
-		case 6:
+		case 7:
 			editDmgDie();
 			break;
-		case 7:
+		case 8:
 			editNumDmgDie();
 			break;
-		case 8:
+		case 9:
 			editDmgMod();
 			break;
-		case 9:
+		case 10:
+			addStatusCondition();
+			removeStatusCondition();
+			break;
+		case 11:
 			editAbilityMods(); 
 			break;
-		case 10:
+		case 12:
 			addWeaknesses();
 			removeWeaknesses();
 			break; 
-		case 11:
+		case 13:
 			addResistances(); 
 			removeResistances(); 
 			break; 
-		case 12:
-			done = true;
+		case 14:
+			addDmgImmunities();
+			removeDmgImmunities();
 			break; 
+		case 15:
+			addConditionImmunities();
+			removeConditionImmunities(); 
+			break;
 		
 		}
 		return done; 
@@ -830,11 +840,11 @@ public class monsterEditor extends encounterEditor{
 		do {
 			System.out.println("Type the name of the damage type you wish to add as a weakness.");
 			int n = 1;
-			for (DamageTypes i: DamageTypes.values()) {
-				System.out.println(n + ") " + i);
-				n++;
-			}
 			System.out.println(n + ") " + "Add no weaknesses");
+			for (DamageTypes i: DamageTypes.values()) {
+				n++;
+				System.out.println(n + ") " + i);
+			}
 			try {
 				int a = scanner.nextInt();
 				if (a < 1) {
@@ -845,16 +855,18 @@ public class monsterEditor extends encounterEditor{
 				}
 				else {
 					int x = 1; 
-					for (DamageTypes i:DamageTypes.values()) {
-						if (a == x) {
-							m_enemy.add_weakness(i);
-							System.out.println(i + " added as a weakness.");
-						}
-						x++;
-					}
-					if (a == n) {
+					if (a == x) {
 						System.out.println("No new weaknesses were added.");
 						done = true;
+					}
+					else {
+						for (DamageTypes i:DamageTypes.values()) {
+							x++;
+							if (a == x) {
+								m_enemy.add_weakness(i);
+								System.out.println(i + " added as a weakness.");
+							}
+						}
 					}
 				}
 			}
@@ -877,11 +889,11 @@ public class monsterEditor extends encounterEditor{
 		do {
 			System.out.println("Type the name of the damage type you wish to remove as a weakness.");
 			int n = 1;
-			for (DamageTypes i: DamageTypes.values()) {
-				System.out.println(n + ") " + i);
-				n++;
-			}
 			System.out.println(n + ") " + "Remove no weaknesses");
+			for (DamageTypes i: DamageTypes.values()) {
+				n++;
+				System.out.println(n + ") " + i);
+			}
 			try {
 				int a = scanner.nextInt();
 				if (a < 1) {
@@ -892,16 +904,18 @@ public class monsterEditor extends encounterEditor{
 				}
 				else {
 					int x = 1; 
-					for (DamageTypes i:DamageTypes.values()) {
-						if (a == x) {
-							m_enemy.remove_weakness(i);
-							System.out.println(i + " removed as a weakness.");
-						}
-						x++;
-					}
-					if (a == n) {
+					if (a == x) {
 						System.out.println("No new weaknesses were removed.");
 						done = true;
+					}
+					else {
+						for (DamageTypes i:DamageTypes.values()) {
+							x++;
+							if (a == x) {
+								m_enemy.remove_weakness(i);
+								System.out.println(i + " removed as a weakness.");
+							}
+						}
 					}
 				}
 			}
@@ -922,13 +936,13 @@ public class monsterEditor extends encounterEditor{
 		
 		boolean done = false;
 		do {
-			System.out.println("Type the name of the damage type you wish to add as a resistance.");
+			System.out.println("Type the number of the damage type you wish to add as a resistance.");
 			int n = 1;
-			for (DamageTypes i: DamageTypes.values()) {
-				System.out.println(n + ") " + i);
-				n++;
-			}
 			System.out.println(n + ") " + "Add no resistances");
+			for (DamageTypes i: DamageTypes.values()) {
+				n++;
+				System.out.println(n + ") " + i);
+			}
 			try {
 				int a = scanner.nextInt();
 				if (a < 1) {
@@ -939,16 +953,18 @@ public class monsterEditor extends encounterEditor{
 				}
 				else {
 					int x = 1; 
-					for (DamageTypes i:DamageTypes.values()) {
-						if (a == x) {
-							m_enemy.add_resistance(i);
-							System.out.println(i + " added as a resistance.");
-						}
-						x++;
-					}
-					if (a == n) {
+					if (a == x) {
 						System.out.println("No new resistances were added.");
 						done = true;
+					}
+					else {
+						for (DamageTypes i:DamageTypes.values()) {
+							x++;
+							if (a == x) {
+								m_enemy.add_resistance(i);
+								System.out.println(i + " added as a resistance.");
+							}
+						}
 					}
 				}
 			}
@@ -969,13 +985,13 @@ public class monsterEditor extends encounterEditor{
 		
 		boolean done = false;
 		do {
-			System.out.println("Type the name of the damage type you wish to remove as a resistance.");
+			System.out.println("Type the number of the damage type you wish to remove as a resistance.");
 			int n = 1;
-			for (DamageTypes i: DamageTypes.values()) {
-				System.out.println(n + ") " + i);
-				n++;
-			}
 			System.out.println(n + ") " + "Remove no resistances");
+			for (DamageTypes i: DamageTypes.values()) {
+				n++;
+				System.out.println(n + ") " + i);
+			}
 			try {
 				int a = scanner.nextInt();
 				if (a < 1) {
@@ -986,16 +1002,315 @@ public class monsterEditor extends encounterEditor{
 				}
 				else {
 					int x = 1; 
-					for (DamageTypes i:DamageTypes.values()) {
-						if (a == x) {
-							m_enemy.remove_resistance(i);
-							System.out.println(i + " removed as a resistance.");
-						}
-						x++;
-					}
-					if (a == n) {
+					if (a == x) {
 						System.out.println("No new resistances were removed.");
 						done = true;
+					}
+					else {
+						for (DamageTypes i:DamageTypes.values()) {
+							x++;
+							if (a == x) {
+								m_enemy.remove_resistance(i);
+								System.out.println(i + " removed as a resistance.");
+							}
+						}
+					}
+				}
+			}
+			catch(Exception e) {
+				System.out.println(MustBeIntException);
+				//System.out.println("Error resulting from:  " + e);
+				scanner.next();
+			}
+			
+		} while (done == false);
+		
+	}
+	
+	/*
+	 * Asks User to choose which, if any, DamageType Immunities will be added to the Monster
+	 */
+	private static void addDmgImmunities () {
+		
+		boolean done = false;
+		do {
+			System.out.println("Type the number of the damage type you wish to add as an immunity.");
+			int n = 1;
+			System.out.println(n + ") " + "Add no Immunities");
+			for (DamageTypes i: DamageTypes.values()) {
+				n++;
+				System.out.println(n + ") " + i);
+			}
+			try {
+				int a = scanner.nextInt();
+				if (a < 1) {
+					System.out.println(OutOfRangeException);
+				}
+				else if (a > DamageTypes.values().length + 1) {
+					System.out.println(OutOfRangeException);
+				}
+				else {
+					int x = 1; 
+					if (a == x) {
+						System.out.println("No new immunities were added.");
+						done = true;
+					}
+					else {
+						for (DamageTypes i:DamageTypes.values()) {
+							x++;
+							if (a == x) {
+								m_enemy.add_dmg_immunity(i);
+								System.out.println(i + " added as an immunity.");
+							}
+						}
+					}
+				}
+			}
+			catch(Exception e) {
+				System.out.println(MustBeIntException);
+				//System.out.println("Error resulting from:  " + e);
+				scanner.next();
+			}
+			
+		} while (done == false);
+		
+	}
+	
+	/*
+	 * Asks User to choose which, if any, DamageType Immunities will be removed from the Monster
+	 */
+	private static void removeDmgImmunities () {
+		
+		boolean done = false;
+		do {
+			System.out.println("Type the number of the damage type you wish to remove as an immunity.");
+			int n = 1;
+			System.out.println(n + ") " + "Remove no Immunities");
+			for (DamageTypes i: DamageTypes.values()) {
+				n++;
+				System.out.println(n + ") " + i);
+			}
+			try {
+				int a = scanner.nextInt();
+				if (a < 1) {
+					System.out.println(OutOfRangeException);
+				}
+				else if (a > DamageTypes.values().length + 1) {
+					System.out.println(OutOfRangeException);
+				}
+				else {
+					int x = 1; 
+					if (a == x) {
+						System.out.println("No new Immunities were removed.");
+						done = true;
+					}
+					else {
+						for (DamageTypes i:DamageTypes.values()) {
+							x++;
+							if (a == x) {
+								m_enemy.remove_dmg_immunity(i);
+								System.out.println(i + " removed as an Immunity.");
+							}
+						}
+					}
+				}
+			}
+			catch(Exception e) {
+				System.out.println(MustBeIntException);
+				//System.out.println("Error resulting from:  " + e);
+				scanner.next();
+			}
+			
+		} while (done == false);
+		
+	}
+	
+	/*
+	 * Asks User to choose which, if any, StatusCondition Immunities will be added to the Monster
+	 */
+	private static void addConditionImmunities () {
+		
+		boolean done = false;
+		do {
+			System.out.println("Type the number of the condition you wish to add as an immunity.");
+			int n = 1;
+			System.out.println(n + ") " + "Add no Immunities");
+			for (StatusCondition i: StatusCondition.values()) {
+				n++;
+				System.out.println(n + ") " + i);
+			}
+			try {
+				int a = scanner.nextInt();
+				if (a < 1) {
+					System.out.println(OutOfRangeException);
+				}
+				else if (a > DamageTypes.values().length) {
+					System.out.println(OutOfRangeException);
+				}
+				else {
+					int x = 1; 
+					if (a == x) {
+						System.out.println("No new immunities were added.");
+						done = true;
+					}
+					else {
+						for (StatusCondition i:StatusCondition.values()) {
+							x++;
+							if (a == x) {
+								m_enemy.add_condition_immunity(i);
+								System.out.println(i + " added as an immunity.");
+							}
+						}
+					}
+				}
+			}
+			catch(Exception e) {
+				System.out.println(MustBeIntException);
+				//System.out.println("Error resulting from:  " + e);
+				scanner.next();
+			}
+			
+		} while (done == false);
+		
+	}
+	
+	/*
+	 * Asks User to choose which, if any, StatusCondition Immunities will be removed from the Monster
+	 */
+	private static void removeConditionImmunities () {
+		
+		boolean done = false;
+		do {
+			System.out.println("Type the number of the condition you wish to remove as an immunity.");
+			int n = 1;
+			System.out.println(n + ") " + "Remove no Immunities");
+			for (StatusCondition i: StatusCondition.values()) {
+				n++;
+				System.out.println(n + ") " + i);
+			}
+			
+			try {
+				int a = scanner.nextInt();
+				if (a < 1) {
+					System.out.println(OutOfRangeException);
+				}
+				else if (a > DamageTypes.values().length) {
+					System.out.println(OutOfRangeException);
+				}
+				else {
+					int x = 1; 
+					if (a == x) {
+						System.out.println("No new Immunities were removed.");
+						done = true;
+					}
+					else {
+						for (StatusCondition i:StatusCondition.values()) {
+							x++;
+							if (a == x) {
+								m_enemy.remove_condition_immunity(i);
+								System.out.println(i + " removed as an Immunity.");
+							}
+						}
+					}
+
+				}
+			}
+			catch(Exception e) {
+				System.out.println(MustBeIntException);
+				//System.out.println("Error resulting from:  " + e);
+				scanner.next();
+			}
+			
+		} while (done == false);
+		
+	}
+	
+	/*
+	 * Asks the user which if any StatusConditions should be placed on the enemy
+	 */
+	private static void addStatusCondition () {
+		
+		boolean done = false;
+		do {
+			System.out.println("Type the number of the status condition you wish to give this enemy.");
+			int n = 1;
+			System.out.println(n + ") " + "Add no new Status Conditions");
+			for (StatusCondition i: StatusCondition.values()) {
+				n++;
+				System.out.println(n + ") " + i);
+			}
+			
+			try {
+				int a = scanner.nextInt();
+				if (a < 1) {
+					System.out.println(OutOfRangeException);
+				}
+				else if (a > DamageTypes.values().length) {
+					System.out.println(OutOfRangeException);
+				}
+				else {
+					int x = 1; 
+					if (a == x) {
+						System.out.println("No new Status Conditions were added.");
+						done = true;
+					}
+					else {
+						for (StatusCondition i:StatusCondition.values()) {
+							x++;
+							if (a == x) {
+								m_enemy.add_status_condition(i);
+								System.out.println(m_enemy.get_name() + " is now " + i);
+							}
+						}
+					}
+				}
+			}
+			catch(Exception e) {
+				System.out.println(MustBeIntException);
+				//System.out.println("Error resulting from:  " + e);
+				scanner.next();
+			}
+			
+		} while (done == false);
+		
+	}
+	
+	/*
+	 * Asks the user which if any StatusConditions should be removed from the enemy
+	 */
+	private static void removeStatusCondition() {
+		
+		boolean done = false;
+		do {
+			System.out.println("Type the number of the status condition you wish to remove from this enemy.");
+			int n = 1;
+			System.out.println(n + ") " + "Remove no Status Conditions");
+			for (StatusCondition i: StatusCondition.values()) {
+				n++;
+				System.out.println(n + ") " + i);
+			}
+			try {
+				int a = scanner.nextInt();
+				if (a < 1) {
+					System.out.println(OutOfRangeException);
+				}
+				else if (a > DamageTypes.values().length) {
+					System.out.println(OutOfRangeException);
+				}
+				else {
+					int x = 1; 
+					if (a == x) {
+						System.out.println("No new Status Conditions were added.");
+						done = true;
+					}
+					else {
+						for (StatusCondition i:StatusCondition.values()) {
+							x++;
+							if (a == x) {
+								m_enemy.remove_status_condition(i);
+								System.out.println(m_enemy.get_name() + " has recovered from being " + i);
+							}
+						}
 					}
 				}
 			}
@@ -1207,6 +1522,7 @@ public class monsterEditor extends encounterEditor{
 				int a = scanner.nextInt();
 				if (a == 0) {
 					System.out.println("No copies will be made.");
+					done = true;
 				}
 				else if (a < 0 | a > 20) {
 					System.out.println(OutOfRangeException);

@@ -108,7 +108,7 @@ public class routeEditor extends WorldEditor {
 				if (a < 1) {
 					System.out.println(OutOfRangeException);
 				}
-				else if (a > 9) {
+				else if (a > 8) {
 					System.out.println(OutOfRangeException);
 				}
 				else {
@@ -130,15 +130,14 @@ public class routeEditor extends WorldEditor {
 		
 		System.out.println("What changes do you want to make to " + m_route.get_name() + "?");
 		String output = "";
-		output = output + "1) Name (Unavailable) \n";
+		output = output + "1) Return to Route Selection \n";
 		output = output + "2) Description \n";
 		output = output + "3) Length \n";
 		output = output + "4) Terrain Type \n";
 		output = output + "5) Encounters \n";
 		output = output + "6) View Route Details \n";
-		output = output + "7) Delete Route \n";
-		output = output + "8) Save Route \n";
-		output = output + "9) Return to Route Choices \n";
+		output = output + "7) Save Route \n";
+		output = output + "8) Delete Route  \n";
 		System.out.println(output); 
 	}
 	
@@ -154,7 +153,8 @@ public class routeEditor extends WorldEditor {
 		boolean done = false;
 		switch (choice) {
 			case 1:
-				System.out.println("Name editing is not yet avialable.");
+				System.out.println("Returning to Route Selection...");
+				done = true;
 				break;
 			case 2:
 				scanner.nextLine();
@@ -177,9 +177,6 @@ public class routeEditor extends WorldEditor {
 				System.out.println(m_route.get_all_info());
 				break;
 			case 7:
-				done = deleteRoute(); 
-				break; 
-			case 8:
 				boolean saved = Worldbuilder.saveRoute();
 				if (saved) {
 					for (Encounter e: m_route.get_all_encounters()) {
@@ -189,10 +186,10 @@ public class routeEditor extends WorldEditor {
 						e.autoSave();
 					}
 				}
-				break;
-			case 9:
-				done = true; 
 				break; 
+			case 8:
+				done = deleteRoute(); 
+				break;
 		}
 		return done; 
 	}

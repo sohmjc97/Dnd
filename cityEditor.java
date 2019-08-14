@@ -88,7 +88,7 @@ public class cityEditor extends WorldEditor {
 	private static void listCityEdits() {
 		
 		String output = "What changes would you like to make to " + m_city.get_name() + "\n";
-		output = output + "1) Name (Currently not allowed) \n";
+		output = output + "1) Return to City Selection \n";
 		output = output + "2) Description \n";
 		output = output + "3) Age \n";
 		output = output + "4) Population \n";
@@ -101,7 +101,6 @@ public class cityEditor extends WorldEditor {
 		output = output + "11) View City Details \n";
 		output = output + "12) Save City \n";
 		output = output + "13) Delete City \n";
-		output = output + "14) Return to City Choice Menu \n";
 		System.out.println(output); 
 	}
 	
@@ -116,10 +115,10 @@ public class cityEditor extends WorldEditor {
 				listCityEdits(); 
 				System.out.println("Type the number of the thing you want to edit.");
 				int a = scanner.nextInt();
-				if (a <= 0) {
+				if (a < 1) {
 					System.out.println(OutOfRangeException);
 				}
-				else if (a > 14) {
+				else if (a > 13) {
 					System.out.println(OutOfRangeException);
 				}
 				else {
@@ -141,7 +140,8 @@ public class cityEditor extends WorldEditor {
 		boolean done = false;
 		switch(choice) {
 			case 1:
-				System.out.println("Name changes aren't yet allowed.");
+				System.out.println("Returning to City Selection...");
+				done = true;
 				break;
 			case 2:
 				System.out.println("What should the new description be?");
@@ -203,11 +203,7 @@ public class cityEditor extends WorldEditor {
 				}
 				break; 
 			case 13:
-				delete_city(); 
-				done = true;
-				break;
-			case 14:
-				done = true; 
+				done = delete_city(); 
 				break;
 		}
 		return done; 
@@ -307,8 +303,9 @@ public class cityEditor extends WorldEditor {
 	 * If they do want to delete it, the city will be removed from the Country, all routes that connected the
 	 * City to other Cities will be deleted as well, and the CIty object itself will be deleted. 
 	 */
-	private static void delete_city () {
+	private static boolean delete_city () {
 		
+		boolean deleted = false;
 		boolean over = false;
 		do {
 			//scanner.next();
@@ -319,6 +316,8 @@ public class cityEditor extends WorldEditor {
 					if (a == 1) {
 						m_country.delete_routes(m_city);
 						m_country.delete_city(m_city);
+						m_city = null;
+						deleted = true;
 						over = true;
 					}
 					else if (a == 0) {
@@ -334,6 +333,6 @@ public class cityEditor extends WorldEditor {
 				scanner.next(); 
 			}
 		} while (over == false);
-		m_city = null;
+		return deleted; 
 	}
 }

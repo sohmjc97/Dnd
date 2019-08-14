@@ -29,7 +29,6 @@ public abstract class Being {
 	 * These will affect how the being performs in combat, but are not yet implemented.
 	 */
     public enum StatusCondition {
-        HEALTHY,
         POISONED,
         PARALYZED,
         ASLEEP,
@@ -70,6 +69,8 @@ public abstract class Being {
 	
 	ArrayList<DamageTypes> m_weaknesses = new ArrayList<DamageTypes>(); 
 	ArrayList<DamageTypes> m_resistances = new ArrayList<DamageTypes>(); 
+	ArrayList<DamageTypes> m_dmg_immunities = new ArrayList<DamageTypes>();
+	ArrayList<StatusCondition> m_condition_immunities = new ArrayList<StatusCondition>(); 
 	ArrayList<StatusCondition> m_condition = new ArrayList<StatusCondition>(); //todo
 	//ArrayList<Languages> m_languages = new ArrayList<Languages>(); //todo
 	

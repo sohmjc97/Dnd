@@ -636,6 +636,7 @@ public class Monster extends Being{
 		output = output + "Number of Damage Dice: " + m_numdmgDie + "\n";
 		output = output + "Damage Mod: " + m_dmgMod +"\n";
 		output = output + "Attack Mod: " + m_attackMod +"\n";
+		output = output + "Status Conditions: " + m_condition + "\n";
 		output = output + "----Ability Mods----\n"; 
 		for (String i: m_abilityMods.keySet()) {
 	        output = output + i + ": " + m_abilityMods.get(i) + "\n"; 
@@ -643,6 +644,8 @@ public class Monster extends Being{
 		
 		output = output + "Weak to: " + get_weaknesses() + "\n";
 		output = output + "Resistant to: " + get_resistances() + "\n";
+		output = output + "Immune to Damage Types: " + get_dmg_immunities() + "\n"; 
+		output = output + "Immune to Conditions: " + get_condition_immunities() + "\n";
 
 		
 		output = output + "------- Inventory --------\n";
@@ -672,11 +675,14 @@ public class Monster extends Being{
 	    list_numdmgDie(); 
 	    list_dmgMod(); 
 	    list_attackMod(); 
+	    list_status_condition(); 
 	    list_XP();
 	    
 	    list_abilityMods();
 	    list_weaknesses();
 	    list_resistances();
+	    list_dmg_immunities(); 
+	    list_condition_immunities(); 
 	    list_items();
 	    
 	    System.out.println("--------------------------------------------------");
@@ -882,6 +888,126 @@ public class Monster extends Being{
 	            m_resistances.remove(i);
 	        }
 	    }
+	}
+	
+	/*
+	 * Gives the monster immunity to the given DamageType
+	 * 
+	 * @param	damageType DamageTypes 		:the type of damage you want this creature to be immune to
+	 */
+	public void add_dmg_immunity (DamageTypes damageType) {
+		
+		m_dmg_immunities.add(damageType); 
+		
+	}
+	
+	/*
+	 * Removes the monster's immunity to the given DamageType
+	 * 
+	 * @param	damageType DamageTypes 		:the type of damage you want this creature to no longer be immune to
+	 */
+	public void remove_dmg_immunity (DamageTypes damageType) {
+		
+		m_dmg_immunities.remove(damageType);
+		
+	}
+	
+	/*
+	 * Returns the DamageTypes that the monster is immune to
+	 */
+	public ArrayList<DamageTypes> get_dmg_immunities () {
+		
+		return m_dmg_immunities;
+		
+	}
+	
+	/*
+	 * Prints out the types of damages that this monster is immune to
+	 */
+	public void list_dmg_immunities () {
+		
+		System.out.println("Immune to Damage Types: " + m_dmg_immunities);
+		
+	}
+	
+	/*
+	 * Gives this monster immunity to the given StatusCondition
+	 * 
+	 * @param	condition StatusCondition		:the kind of StatusCondition you want this monster to be immune to
+	 */
+	public void add_condition_immunity (StatusCondition condition) {
+		
+		m_condition_immunities.add(condition);
+		
+	}
+	
+	/*
+	 * Removes this monster's immunity to the given StatusCondition
+	 * 
+	 * @param	condition StatusCondition		:the kind of StatusCondition you want this monster to no longer be immune to
+	 */
+	public void remove_condition_immunity(StatusCondition condition) {
+		
+		m_condition_immunities.remove(condition);
+		
+	}
+	
+	/*
+	 * Returns the kinds of StatusConditions that this monster is immune to
+	 */
+	public ArrayList<StatusCondition> get_condition_immunities () {
+		
+		return m_condition_immunities;
+		
+	}
+	
+	/*
+	 * Prints out what kind of StatusConditions this monster is immune to
+	 */
+	public void list_condition_immunities() {
+		
+		System.out.println("Immune to Status: " + m_condition_immunities);
+		
+	}
+	
+	/*
+	 * Adds a Status Condition to the list of StatusCondition that this monster is currently under the effect of
+	 * 
+	 * @param	condition StatusCondition	:the status condition the monster should be under the effect of
+	 */
+	public void add_status_condition (StatusCondition condition) {
+		
+		m_condition.add(condition);
+		
+	}
+	
+	/*
+	 * Removes a Status Condition from the list of StatusCondition that this monster is currently under the effect of
+	 * 
+	 * @param	condition StatusCondition	:the status condition the monster should no longer be under the effect of
+	 */
+	public void remove_status_condition (StatusCondition condition) {
+		
+		m_condition.remove(condition);
+		
+	}
+	
+	/*
+	 * Returns the list of status conditions that this monster is currently under the effect of
+	 */
+	public ArrayList<StatusCondition> get_status_condition () {
+		
+		return m_condition; 
+		
+	}
+	
+	/*
+	 * Prints a list of status conditions that the monster is currently under the effect of
+	 */
+	public void list_status_condition () {
+		
+		System.out.println("Status Condition: " + m_condition);
+		
 	}
 	
 	/*
