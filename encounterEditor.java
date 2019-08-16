@@ -85,18 +85,26 @@ public class encounterEditor extends WorldEditor {
 	 * edit any of the old ones 
 	 */
 	private static void listEncounterChoices(Route route) {
-		String output = ""; 
+		String output = "\n"; 
 		int encounterCount = m_route.get_all_encounters().size(); 
+		int dayEncounterCount = m_route.get_day_encounters().size();
+		int nightEncounterCount = m_route.get_night_encounters().size();
 		System.out.println("Encounter Count: " + encounterCount);
 		
 		output = output + "1) " + "Return to Route Editor \n";
 		output = output + "2) " + "Add new encounter \n";
-		
-		for (int i = 0; i< encounterCount; i++) {
-			output = output + (i+3) + ") " + m_route.get_all_encounters().get(i).get_name() + "\n"; 
+		output = output + "\n <<< Day Encounters >>> \n";
+		for (int i = 0; i < dayEncounterCount; i++) {
+			output = output + (i+3) + ") " + m_route.get_day_encounters().get(i).get_name() + "\n"; 
 		}
-		
+		output = output + " \n <<< Night Encounters >>> \n";
+		int x = 0;
+		for (int j = dayEncounterCount; j < encounterCount; j++) {
+			output = output + (j+3) + ") " + m_route.get_night_encounters().get(x).get_name() + "\n"; 
+			x++;
+		}
 		System.out.println(output);  
+		
 	}
 	
 	/*
@@ -106,17 +114,24 @@ public class encounterEditor extends WorldEditor {
 	 * edit any of the old ones 
 	 */
 	private static void listEncounterChoices(City city) {
-		String output = ""; 
+		String output = "\n"; 
 		int encounterCount = m_city.get_all_encounters().size(); 
+		int dayEncounterCount = m_city.get_day_encounters().size();
+		int nightEncounterCount = m_city.get_night_encounters().size();
 		System.out.println("Encounter Count: " + encounterCount);
 		
 		output = output + "1) " + "Return to City Editor \n";
 		output = output + "2) " + "Add new encounter \n";
-		
-		for (int i = 0; i< encounterCount; i++) {
-			output = output + (i+3) + ") " + m_city.get_all_encounters().get(i).get_name() + "\n"; 
+		output = output + "\n <<< Day Encounters >>> \n";
+		for (int i = 0; i < dayEncounterCount; i++) {
+			output = output + (i+3) + ") " + m_city.get_day_encounters().get(i).get_name() + "\n"; 
 		}
-
+		output = output + " \n <<< Night Encounters >>> \n";
+		int x = 0;
+		for (int j = dayEncounterCount; j < encounterCount; j++) {
+			output = output + (j+3) + ") " + m_city.get_night_encounters().get(x).get_name() + "\n"; 
+			x++;
+		}
 		System.out.println(output);  
 	}
 	

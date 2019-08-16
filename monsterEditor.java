@@ -274,7 +274,7 @@ public class monsterEditor extends encounterEditor{
 						changed = getNewEncounter(choice);
 					}
 					else {
-						Route choice = m_encounter.get_country().get_routes().get(m-a-1);
+						Route choice = m_encounter.get_country().get_routes().get(a-n);
 						changed = getNewEncounter(choice); 
 					}
 					//m_encounter = null; 
@@ -622,38 +622,11 @@ public class monsterEditor extends encounterEditor{
 		boolean done = false; 
 		do {
 			scanner.nextLine();
-			System.out.println("What Ability Score is " + m_enemy.get_name() + "'s Attack Mod from?");
+			System.out.println("What is " + m_enemy.get_name() + "'s Attack Mod?");
 			try {
-				String a = scanner.nextLine(); 
-				switch (a) {
-					case "STR":
-						m_enemy.set_attackMod(a);
-						done = true;
-						break;
-					case "DEX":
-						m_enemy.set_attackMod(a);
-						done = true;
-						break;
-					case "WIS":
-						m_enemy.set_attackMod(a);
-						done = true;
-						break;
-					case "INT":
-						m_enemy.set_attackMod(a);
-						done = true;
-						break;
-					case "CON":
-						m_enemy.set_attackMod(a);
-						done = true;
-						break;
-					case "CHA":
-						m_enemy.set_attackMod(a);
-						done = true;
-						break; 
-				}
-				if (!done) {
-					System.out.println("Answer must be either STR, DEX, WIS, INT, CON, or CHA.");
-				}
+				int a = scanner.nextInt(); 
+				m_enemy.set_attackMod(a);
+				done = true;
 			}
 			catch(Exception e) {
 				System.out.println(MustBeIntException);

@@ -617,7 +617,7 @@ public class WorldEditor extends Worldbuilder {
 			}
 			if (line.contains("Attack Mod")) {
 				String attackMod = line.split(": ")[1];
-				enemy.set_attackMod(attackMod);
+				enemy.set_attackMod(Integer.parseInt(attackMod));
 			}
 			if (line.contains("STR:")) {
 				String str = line.split(": ")[1];

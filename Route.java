@@ -314,4 +314,10 @@ public class Route {
 		
 	}
 
+	public void list_all_info() {
+
+		System.out.println(this.get_all_info());
+		
+	}
+
 }

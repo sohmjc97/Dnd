@@ -60,9 +60,10 @@ public abstract class Being {
 	protected int m_numdmgDie = 1; 
 	protected int m_dmgMod = 0; 
 	
-	protected String m_attackMod = "STR"; 
+	protected int m_attackMod = 0; 
 	protected String m_description = "No description available."; 
 	protected String m_name = "Unkown"; 
+	protected boolean isDead = false;
 	
 	HashMap<String, String> m_ItemDrop = new HashMap<String, String>();
 	HashMap<String, Integer> m_abilityMods = new HashMap<String, Integer>();

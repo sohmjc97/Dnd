@@ -330,7 +330,7 @@ public class Monster extends Being{
 	 */
 	public int get_attackMod() {
 	    
-	    int mod = m_abilityMods.get(m_attackMod);
+	    int mod = m_attackMod;
 	    return mod;
 	    
 	}
@@ -347,7 +347,7 @@ public class Monster extends Being{
 	 */
 	public void list_attackMod() {
 		
-	    System.out.println("Attack Mod (" + m_attackMod +"): " + get_attackMod());
+	    System.out.println("Attack Mod: " + get_attackMod());
 	    
 	}
 	
@@ -363,7 +363,7 @@ public class Monster extends Being{
 	 * @param		mod String		:the String abbreviation of the Ability Score (ie. "STR" for Strength or "DEX" for Dexterity)
 	 * 								 that is responsible for determining this Monster's Attack Modifier 
 	 */
-	public void set_attackMod(String mod) {
+	public void set_attackMod(int mod) {
 	    
 	    m_attackMod = mod; 
 	    
@@ -541,7 +541,7 @@ public class Monster extends Being{
 	public int get_abilityMod(String mod) {
 	     
 	    int theMod = m_abilityMods.get(mod);
-	    System.out.println(theMod);
+	    //System.out.println(theMod);
 	    return theMod;
 	    
 	    /*if (theMod != null) {
@@ -1089,7 +1089,7 @@ public class Monster extends Being{
 	 * 
 	 * @return	roll Integer 		:the integer result of the die roll
 	 */
-	public static int roll () {
+	public int roll () {
 		Random rand = new Random(); 
 		int n = rand.nextInt(20);
 		int roll = n+1; 
@@ -1252,22 +1252,25 @@ public class Monster extends Being{
 		
 		System.out.println("The monster swings...");
 		
-		int roll = roll(); 
+		
 		int roll1 = roll();
-		int roll2 = roll();
+		int roll;
 		
 		if (advantage) {
+			int roll2 = roll();
 			roll = Math.max(roll1, roll2);
 			System.out.println("The Monster rolled a " + roll1 + " and a " + roll2 + " .");
 			System.out.println("Since it rolled with advantage, that makes the roll a " + roll + " !");
 		}
 		else if (disadvantage) {
+			int roll2 = roll();
 			roll = Math.min(roll1, roll2);
 			System.out.println("The Monster rolled a " + roll1 + " and a " + roll2 + " .");
 			System.out.println("Since it rolled with disadvantage, that makes the roll a " + roll + " !");
 		}
 		else {
-			System.out.println("He rolled a " + roll + " !");
+			roll = roll1;
+			System.out.println("He rolled a " + roll1 + " !");
 		}
 		
 		int attackMod = get_attackMod();
@@ -1335,6 +1338,7 @@ public class Monster extends Being{
 			
 			if (critSuccess) {
 			    
+				System.out.println(m_name + " landed a critical hit! Damage is doubled!");
 				damage = damage*2;
 				
 			}
@@ -1376,6 +1380,7 @@ public class Monster extends Being{
 	    
 	    int weak = 1;
 	    int resistant = 1;
+	    boolean immune = false;
 	    
 	    for (int i = 0; i < m_weaknesses.size(); i++) {
 	        
@@ -1400,7 +1405,23 @@ public class Monster extends Being{
 	        
 	    }
 	    
-	    int total = (dmg * weak)/resistant; 
+	    for (DamageTypes imm: m_dmg_immunities) {
+	    	
+	    	if (imm == type) {
+	    		
+	    		immune = true;
+	    		System.out.println(m_name + " is immune to " + type);
+	    		
+	    	}
+	    	
+	    }
+	    int total;
+	    if (immune) {
+	    	total = 0;
+	    }
+	    else {
+	    	total = (dmg * weak)/resistant; 
+	    }
 	    System.out.println("Total damage is: " + total);
 		m_hp = m_hp - total; 
 		System.out.println("HP has been reduced to " + m_hp + " / " + m_maxhp);
@@ -1422,6 +1443,17 @@ public class Monster extends Being{
 		
 	}
 	
+	public void regainHP (int gain) {
+		
+		if (m_hp + gain >= m_maxhp) {
+			m_hp = m_maxhp;
+		}
+		else {
+			m_hp = m_hp + gain; 
+		}
+		
+	}
+	
 	/*
 	 * When a Monster has been defeated, it dies. 
 	 * This method prints a message declaring how much XP was gained by the victor
@@ -1433,6 +1465,14 @@ public class Monster extends Being{
 		System.out.println("Items dropped:");
 		list_items();
 		System.out.println("--------------------------------------------------");
+		isDead = true;
+		m_encounter.remove_enemy(this);
+		
+	}
+	
+	public boolean isDead () {
+
+		return isDead;
 		
 	}
 	
