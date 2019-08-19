@@ -67,6 +67,10 @@ public class Monster extends Being{
 		m_abilityMods.put("CON", 0);
 		m_abilityMods.put("CHA", 0);
 		
+		for (Skills i: Skills.values()) {
+			m_skills.put(i, 0);
+		}
+		
 	}
 	
 	
@@ -539,18 +543,9 @@ public class Monster extends Being{
 	 * @return		theMod Integer	:the integer value of the Modifier associated with the given Ability Score 
 	 */
 	public int get_abilityMod(String mod) {
-	     
-	    int theMod = m_abilityMods.get(mod);
-	    //System.out.println(theMod);
-	    return theMod;
 	    
-	    /*if (theMod != null) {
-	       
-	        return theMod;
-	    }
-	    else {
-	        System.out.println(mod + " has not been set yet.");
-	    */
+		int theMod = m_abilityMods.get(mod);
+	    return theMod; 
 	    
 	}
 	
@@ -570,6 +565,34 @@ public class Monster extends Being{
 	        
 	    }
 	    
+	}
+	
+	public HashMap<Skills, Integer> get_skills () {
+		
+		return m_skills; 
+		
+	}
+	
+	public int get_skill (Skills skill) {
+		
+		return m_skills.get(skill);
+		
+	}
+	
+	public void list_skills () {
+		
+		for (Skills i: Skills.values()) {
+			
+			System.out.println(i + ": " + m_skills.get(i));
+			
+		}
+		
+	}
+	
+	public void set_skill (Skills skill, int value) {
+		
+		m_skills.put(skill, value);
+		
 	}
 	
 	/*
@@ -641,7 +664,10 @@ public class Monster extends Being{
 		for (String i: m_abilityMods.keySet()) {
 	        output = output + i + ": " + m_abilityMods.get(i) + "\n"; 
 	    }
-		
+		output = output + "-----Skills-----\n";
+		for (Skills i: Skills.values()) {
+			output = output + i + ": " + m_skills.get(i) + "\n";
+		}
 		output = output + "Weak to: " + get_weaknesses() + "\n";
 		output = output + "Resistant to: " + get_resistances() + "\n";
 		output = output + "Immune to Damage Types: " + get_dmg_immunities() + "\n"; 
@@ -679,6 +705,7 @@ public class Monster extends Being{
 	    list_XP();
 	    
 	    list_abilityMods();
+	    list_skills();
 	    list_weaknesses();
 	    list_resistances();
 	    list_dmg_immunities(); 

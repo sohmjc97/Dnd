@@ -6,10 +6,6 @@ public class encounterEditor extends WorldEditor {
 	protected static Route r_host = null;
 	protected static City c_host = null; 
 	
-	protected static int encounterCount = m_route.get_all_encounters().size(); 
-	protected static int dayEncounterCount = m_route.get_day_encounters().size();
-	protected static int nightEncounterCount = m_route.get_night_encounters().size();
-	
 	/*
 	 * Main Encounter Editor Function for Encounters belonging to Routes
 	 * Gives Choices for which Encounters to edit and gets user answer
@@ -40,7 +36,7 @@ public class encounterEditor extends WorldEditor {
 			}
 			catch (Exception e) {
 				System.out.println(MustBeIntException);
-				//System.out.println("Error resulting from:  " + e);
+				System.out.println("Error resulting from:  " + e);
 				scanner.next(); 
 			}
 		} while (done == false);
@@ -90,7 +86,9 @@ public class encounterEditor extends WorldEditor {
 	 */
 	private static void listEncounterChoices(Route route) {
 		String output = "\n"; 
-		
+		int encounterCount = m_route.get_all_encounters().size(); 
+		int dayEncounterCount = m_route.get_day_encounters().size();
+		int nightEncounterCount = m_route.get_night_encounters().size();
 		System.out.println("Encounter Count: " + encounterCount);
 		
 		output = output + "1) " + "Return to Route Editor \n";
@@ -172,10 +170,20 @@ public class encounterEditor extends WorldEditor {
 		}
 		else {
 			if (c_host == null) {
-				m_encounter = m_route.get_all_encounters().get(choice - 3); 
+				if (choice > m_route.get_day_encounters().size() +2) {
+					m_encounter = m_route.get_night_encounters().get(choice - m_route.get_day_encounters().size() -3); 
+				}
+				else {
+					m_encounter = m_route.get_day_encounters().get(choice - 3); 
+				} 
 			}
 			else if (r_host == null) {
-				m_encounter = m_city.get_all_encounters().get(choice - 3);
+				if (choice > m_route.get_day_encounters().size() +2) {
+					m_encounter = m_city.get_night_encounters().get(choice - m_route.get_day_encounters().size() -3); 
+				}
+				else {
+					m_encounter = m_city.get_day_encounters().get(choice - 3); 
+				} 
 			}
 			else {
 				System.out.println("Program encountered a problem.");

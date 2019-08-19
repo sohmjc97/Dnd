@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.util.*;
 
 import Dnd.Being.DamageTypes;
+import Dnd.Being.Skills;
 import Dnd.Being.StatusCondition;
 import Dnd.Country.CityType;
 import Dnd.Country.TerrainType;
@@ -726,6 +727,16 @@ public class WorldEditor extends Worldbuilder {
 						}
 					}
 					
+				}
+				
+			}
+			
+			for (Skills i: Skills.values()) {
+				
+				if (line.contains(i.toString())) {
+					String[] parts = line.split(": ");
+					int value = Integer.parseInt(parts[1]);
+					enemy.set_skill(i, value);
 				}
 				
 			}

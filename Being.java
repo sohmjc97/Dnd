@@ -41,6 +41,27 @@ public abstract class Being {
         FROZEN
     }
     
+    public enum Skills {
+    	ATHLETICS,
+    	ACROBATICS,
+    	SLEIGHT_OF_HAND,
+    	STEALTH,
+    	ARCANA,
+    	HISTORY,
+    	INVESTIGATION,
+    	NATURE,
+    	RELIGION,
+    	ANIMAL_HANDLING,
+    	INSIGHT,
+    	MEDICINE,
+    	PERCEPTION,
+    	SURVIVAL,
+    	DECEPTION,
+    	INTIMIDATION,
+    	PERFORMANCE,
+    	PERSUASION
+    }
+    
     /*
      * Each being should know to which Encounter, Route or City, and Country they belong. 
      * These variables will track that info. 
@@ -67,12 +88,13 @@ public abstract class Being {
 	
 	HashMap<String, String> m_ItemDrop = new HashMap<String, String>();
 	HashMap<String, Integer> m_abilityMods = new HashMap<String, Integer>();
+	HashMap<Skills, Integer> m_skills = new HashMap<Skills, Integer>(); 
 	
 	ArrayList<DamageTypes> m_weaknesses = new ArrayList<DamageTypes>(); 
 	ArrayList<DamageTypes> m_resistances = new ArrayList<DamageTypes>(); 
 	ArrayList<DamageTypes> m_dmg_immunities = new ArrayList<DamageTypes>();
 	ArrayList<StatusCondition> m_condition_immunities = new ArrayList<StatusCondition>(); 
-	ArrayList<StatusCondition> m_condition = new ArrayList<StatusCondition>(); //todo
+	ArrayList<StatusCondition> m_condition = new ArrayList<StatusCondition>();
 	//ArrayList<Languages> m_languages = new ArrayList<Languages>(); //todo
 	
 	public abstract int attack(int roll, int targetAC); 

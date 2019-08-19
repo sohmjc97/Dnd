@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import Dnd.Being.DamageTypes;
+import Dnd.Being.Skills;
 
 public class GameRunner extends WorldEditor {
 	
@@ -14,6 +15,9 @@ public class GameRunner extends WorldEditor {
 	
 	private static Encounter m_encounter = null; 
 	
+	/*
+	 * Main function of GameRunner
+	 */
 	public static void play () {
 		
 		m_city = null;
@@ -34,6 +38,9 @@ public class GameRunner extends WorldEditor {
 		//listMonsterOptions();
 		//Rolls for actions and gives results 
 		
+	/*
+	 * Lists Routes and Cities for user to choose from
+	 */
 	private static void listHostLocations() {
 		
 		String output = "<<< Cities >>> \n";
@@ -50,6 +57,9 @@ public class GameRunner extends WorldEditor {
 		
 	}
 	
+	/*
+	 * Gets user input as to which Route or City to explore
+	 */
 	private static void getHostLocation () {
 		
 		boolean done = false;
@@ -83,6 +93,9 @@ public class GameRunner extends WorldEditor {
 		
 	}
 	
+	/*
+	 * Gets user input as to which encounter they want to run 
+	 */
 	public static void getEncounter () {
 		
 		ArrayList<Encounter> availableEncounters = null;
@@ -134,6 +147,9 @@ public class GameRunner extends WorldEditor {
 		
 	}
 	
+	/*
+	 * Lists the local encounters for the user to pick from 
+	 */
 	public static void listEncounters () {
 		int x = 1;
 		String output = x + ") Return to Location Selection \n";
@@ -159,6 +175,9 @@ public class GameRunner extends WorldEditor {
 		
 	}
 	
+	/*
+	 * Gets user input as to what they want to do within the Encounter 
+	 */
 	private static void getEncounterOptions () {
 		
 		boolean done = false;
@@ -169,7 +188,7 @@ public class GameRunner extends WorldEditor {
 			
 			try {
 				int a = scanner.nextInt();
-				if (a < 1 | a > 4) {
+				if (a < 1 | a > 2) {
 					System.out.println(OutOfRangeException);
 				}
 				else {
@@ -187,16 +206,20 @@ public class GameRunner extends WorldEditor {
 		
 	}
 	
+	/*
+	 * Lists options for actions to take within the Encounter
+	 */
 	private static void listEncounterOptions() {
 	
 		String output = "1) Return to Encounter Selection \n";
-		output = output + "2) Skill Check on PLayers \n";
-		output = output + "3) Skill Check on Enemy \n";
-		output = output + "4) Begin Combat \n";
+		output = output + "2) Begin Combat \n";
 		System.out.println(output);
 		
 	}
 	
+	/*
+	 * Takes the action that the user chose within the Encounter 
+	 */
 	private static boolean parseEncounterOptions(int choice) {
 		
 		boolean done = false;
@@ -206,24 +229,225 @@ public class GameRunner extends WorldEditor {
 			done = true;
 			break;
 		case 2:
-		case 3:
-			done = runSkillCheck();
-			break;
-		case 4:
 			runCombat();
 			break;
 		}
 		return done;
 		
 	}
-	
-	private static boolean runSkillCheck() {
+		
+	/*
+	 * This is used for when the Player must make a skill check or saving throw against the Enemy's action. 
+	 */
+	private static boolean runPlayerSkillCheck() {
+		
+		System.out.println("The Monster is Rolling against the Player...");
+		int mod = 0; 
+		boolean decision = false;
+		do {
+			System.out.println("Is this an ability check or skill check? (1 = Skill / 0 = Ability) ");
+			try {
+				int a = scanner.nextInt();
+				if (a == 0) {
+					mod = getAbilityMod(); 
+					decision = true;
+				}
+				else if (a == 1) {
+					mod = getSkillMod(); 
+					decision = true;
+				}
+				else {
+					System.out.println(OutOfRangeException);
+				}
+			}
+			catch (Exception e) {
+				System.out.println(MustBeIntException + "\n"
+						+ "Error resulting from: " + e);
+				scanner.next();
+			}
+		} while (decision == false);
+		
+		//This is what the player has to beat with their total in order to succeed 
+		int DC = 10 + mod; 
+		
+		int roll = 0;
 		boolean done = false;
-		System.out.println("Entering Skill Checker...");
+		do {
+			System.out.println("Enter Player's Roll: ");
+			
+			try {
+				int a = scanner.nextInt();
+				if (a < -6 | a > 50) {
+					System.out.println(OutOfRangeException);
+				}
+				else {
+					roll = a;
+					done = true;
+				}
+			}
+			catch (Exception e) {
+				System.out.println(MustBeIntException + "\n"
+						+ "Error resulting from: " + e);
+				scanner.next();
+			}
+			
+		} while (done == false);
+		
+		if (roll == 20) {
+			System.out.println("Player has CRITICALLY SUCCEDED the skill check!"); 
+		}
+		else if (roll == 1) {
+			System.out.println("Player has CRITICALLY FAILED the skill check!"); 
+		}
+		else if (roll >= DC) {
+			System.out.println("Player has PASSED the skill check!"); 
+		}
+		else {
+			System.out.println("Player has FAILED the skill check");
+		}
 		
 		return done;
 	}
 	
+	/*
+	 * If it is a check against pure ability, gets user to enter which ability is being tested
+	 */
+	private static int getAbilityMod () {
+		
+		boolean skill = false;
+		int skillMod = 0;
+		do {
+			System.out.println("Enter Ability Abbreviation: ");
+			scanner.nextLine(); 
+		
+			try {
+				String a = scanner.nextLine();
+				skillMod = m_enemy.get_abilityMod(a);
+				skill = true;
+			}
+			catch (Exception e) {
+				System.out.println(GenericException + "\n"
+						+ "Error resulting from: " + e);
+				scanner.next();
+			}
+		} while (skill == false);
+		return skillMod; 
+		
+	}
+	
+	/*
+	 * If it is a check against skill, gets user to enter which skill is being tested
+	 */
+	private static int getSkillMod() {
+		
+		int mod = 0;
+		boolean done = false;
+		do {
+			System.out.println("Enter the number of the RELEVANT SKILL:");
+			int count = 1;
+			for (Skills i: Skills.values()) {
+				System.out.println(count + ") " + i + " " + m_enemy.get_skill(i));
+				count++;
+			}
+			try {
+				int a = scanner.nextInt();
+				if (a < 1 | a > Skills.values().length) {
+					System.out.println(OutOfRangeException);
+				}
+				else {
+					mod = m_enemy.get_skill(Skills.values()[a-1]);
+					done = true; 
+				}
+			}
+			catch (Exception e) {
+				System.out.println(GenericException + "\n"
+						+ "Error resulting from: " + e);
+				scanner.next();
+			}
+		} while (done == false); 
+		
+		return mod;
+		
+	}
+	
+	/*
+	 * This is used for when the Enemy must make a skill check or saving throw against the Player's action. 
+	 */
+	private static void runEnemySkillCheck() {
+		
+		boolean done = false;
+		System.out.println("The Player is rolling against the Monster...");
+		
+		int DC = 0;
+		do {
+			System.out.println("Enter SkillCheck DC: ");
+			
+			try {
+				int a = scanner.nextInt();
+				if (a < 2 | a > 50) {
+					System.out.println(OutOfRangeException);
+				}
+				else {
+					//This sis what the monster will have to get with their total in order to succeed
+					DC = a; 
+					done = true;
+				}
+			}
+			catch (Exception e) {
+				System.out.println(MustBeIntException + "\n"
+						+ "Error resulting from: " + e);
+				scanner.next();
+			}
+			
+		} while (done == false);
+		
+		boolean skill = false;
+		int mod = 0;
+		do {
+			System.out.println("Is this an Ability check or a Skill check? (Skill = 1, Ability = 0) ");
+			
+			try {
+				int a = scanner.nextInt();
+				if (a == 1) {
+					mod = getSkillMod();
+					skill = true;
+				}
+				else if (a == 0) {
+					mod = getAbilityMod();
+					skill = true; 
+				}
+				else {
+					System.out.println(OutOfRangeException);
+				}
+			}
+			catch (Exception e) {
+				System.out.println(GenericException + "\n"
+						+ "Error resulting from: " + e);
+				scanner.next();
+			}
+		} while (skill == false);
+		
+		int roll = m_enemy.roll(); 
+		int total = roll + mod; 
+		
+		if (roll == 20) {
+			System.out.println(m_enemy.get_name() + " CRITICALLY SUCCEEDED the SkillCheck!");
+		}
+		else if (roll == 1) {
+			System.out.println(m_enemy.get_name() + " CRITICALLY FAILED the SkillCheck!");
+		}
+		else if (total >= DC) {
+			System.out.println(m_enemy.get_name() + " PASSED the SkillCheck with a " + total);
+		}
+		else {
+			System.out.println(m_enemy.get_name() + " FAILED the SkillCheck with a " + total);
+		}
+				
+	}
+	
+	/*
+	 * Runs combat, listing each monster and its initiative 
+	 */
 	private static boolean runCombat () {
 		boolean done = false;
 		System.out.println("Entering Combat...");
@@ -262,6 +486,9 @@ public class GameRunner extends WorldEditor {
 		return done;
 	}
 
+	/*
+	 * Determines each monsters' initiative
+	 */
 	private static HashMap<Monster, Integer> rollEnemyInitiative () {
 		
 		HashMap<Monster, Integer> order = new HashMap<Monster, Integer>();
@@ -274,6 +501,9 @@ public class GameRunner extends WorldEditor {
 		
 	}
 	
+	/*
+	 * Gets user input for what action the chosen Monster should take 
+	 */
 	private static void getEnemyOptions(int index) {
 		
 		m_enemy = m_encounter.get_enemies().get(index - 2);
@@ -285,7 +515,7 @@ public class GameRunner extends WorldEditor {
 			
 			try {
 				int a = scanner.nextInt();
-				if (a < 1 | a > 6) {
+				if (a < 1 | a > 7) {
 					System.out.println(OutOfRangeException);
 				}
 				else {
@@ -303,19 +533,26 @@ public class GameRunner extends WorldEditor {
 		
 	}
 	
+	/*
+	 * Lists action options for each monster can take
+	 */
 	private static void listEnemyOptions () {
 		
 		String output = "";
 		output = output + "1) Finish Turn \n";
 		output = output + "2) Attack \n";
-		output = output + "3) Dodge \n";
-		output = output + "4) Heal \n";
-		output = output + "5) Take Damage \n";
-		output = output + "6) Get Enemy Stats";
+		output = output + "3) Skill Check Against Player \n";
+		output = output + "4) Skill Check Against Monster \n";
+		output = output + "5) Heal \n";
+		output = output + "6) Take Damage \n";
+		output = output + "7) Get Enemy Stats";
 		System.out.println(output);
 		
 	}
 	
+	/*
+	 * Takes  the action decided by the user
+	 */
 	private static boolean parseEnemyOptionChoice(int choice) {
 		
 		boolean done = false;
@@ -329,21 +566,27 @@ public class GameRunner extends WorldEditor {
 			rollAttack();
 			break;
 		case 3:
-			//dodge();
+			runPlayerSkillCheck();
 			break;
 		case 4:
-			getHeals();
+			runEnemySkillCheck();
 			break;
 		case 5:
-			done = getAttacked(); 
+			getHeals();
 			break;
 		case 6:
+			done = getAttacked(); 
+			break;
+		case 7:
 			m_enemy.list_all_stats();
 			break;
 		}
 		return done;
 	}
 	
+	/*
+	 * Monster attack function, determines if they hit based on their target's AC abd if so, how much damagae was done
+	 */
 	private static void rollAttack () {
 		
 		boolean done = false;
@@ -379,6 +622,9 @@ public class GameRunner extends WorldEditor {
 		
 	}
 	
+	/*
+	 * Asks user if the roll should be with advantage
+	 */
 	private static boolean getAdv() {
 		
 		boolean adv = false;
@@ -408,6 +654,9 @@ public class GameRunner extends WorldEditor {
 		
 	}
 	
+	/*
+	 * Asks user if the monster should attack with disadvantage 
+	 */
 	private static boolean getDisadv() {
 		
 		boolean disadv = false;
@@ -437,6 +686,9 @@ public class GameRunner extends WorldEditor {
 		
 	}
 	
+	/*
+	 * Gets user input for how much health should be regained by the monster 
+	 */
 	private static void getHeals() {
 		
 		boolean done = false;
@@ -464,6 +716,9 @@ public class GameRunner extends WorldEditor {
 		
 	}
 	
+	/*
+	 * Determines if the monster got hit by the player's roll, and then how much damage was taken. 
+	 */
 	private static boolean getAttacked () {
 		
 		boolean gotkilled = false;
@@ -515,6 +770,9 @@ public class GameRunner extends WorldEditor {
 		
 	}
 	
+	/*
+	 * Gets user input as to the damage type of the attack 
+	 */
 	private static DamageTypes getDamageType () {
 		
 		boolean done = false;

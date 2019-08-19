@@ -3,6 +3,7 @@ package Dnd;
 import java.util.ArrayList;
 
 import Dnd.Being.DamageTypes;
+import Dnd.Being.Skills;
 import Dnd.Being.StatusCondition;
 
 public class monsterEditor extends encounterEditor{
@@ -375,11 +376,11 @@ public class monsterEditor extends encounterEditor{
 					if (a < 1) {
 						System.out.println(OutOfRangeException);
 					}
-					else if (a > choice.get_day_encounters().size() + 1) {
+					else if (a > choice.get_all_encounters().size() + 1) {
 						System.out.println(OutOfRangeException);
 					}
 					else {
-						System.out.println(choice.get_all_encounters()); 
+						//System.out.println(choice.get_all_encounters()); 
 						Encounter newEncounter = choice.get_all_encounters().get(a - 1);
 						System.out.println(newEncounter.get_name());
 						m_enemy.switchEncounter(newEncounter, m_enemy);
@@ -419,10 +420,11 @@ public class monsterEditor extends encounterEditor{
 		for (String i: m_enemy.m_abilityMods.keySet()) {
 			output = output + i + ": " + m_enemy.m_abilityMods.get(i) + "\n";
 		}
-		output = output + "12) Weaknesses" + m_enemy.get_weaknesses() + "\n";
-		output = output + "13) Resistances" + m_enemy.get_resistances() + "\n";
-		output = output + "14) Damage Immunities " + m_enemy.get_dmg_immunities() + "\n";
-		output = output + "15) Condition Immunities " + m_enemy.get_condition_immunities() + "\n";
+		output = output + "12) Skills \n";
+		output = output + "13) Weaknesses" + m_enemy.get_weaknesses() + "\n";
+		output = output + "14) Resistances" + m_enemy.get_resistances() + "\n";
+		output = output + "15) Damage Immunities " + m_enemy.get_dmg_immunities() + "\n";
+		output = output + "16) Condition Immunities " + m_enemy.get_condition_immunities() + "\n";
 		
 		System.out.println(output);
 	}
@@ -441,7 +443,7 @@ public class monsterEditor extends encounterEditor{
 				if (a < 0) {
 					System.out.println(OutOfRangeException);
 				}
-				else if (a > 15) {
+				else if (a > 16) {
 					System.out.println(OutOfRangeException);
 				}
 				else {
@@ -500,18 +502,21 @@ public class monsterEditor extends encounterEditor{
 			editAbilityMods(); 
 			break;
 		case 12:
+			editSkills();
+			break;
+		case 13:
 			addWeaknesses();
 			removeWeaknesses();
 			break; 
-		case 13:
+		case 14:
 			addResistances(); 
 			removeResistances(); 
 			break; 
-		case 14:
+		case 15:
 			addDmgImmunities();
 			removeDmgImmunities();
 			break; 
-		case 15:
+		case 16:
 			addConditionImmunities();
 			removeConditionImmunities(); 
 			break;
@@ -762,6 +767,80 @@ public class monsterEditor extends encounterEditor{
 		
 	}
 	
+	
+	private static void editSkills() {
+		
+		boolean done = false;
+		do {
+			System.out.println("Type the number of the Skill you want to change.");
+			int n = 1;
+			System.out.println(n + ") " + "Change no Skills");
+			for (Skills i: Skills.values()) {
+				n++;
+				System.out.println(n + ") " + i + " " + m_enemy.get_skill(i));
+			}
+			try {
+				int a = scanner.nextInt();
+				if (a < 1) {
+					System.out.println(OutOfRangeException);
+				}
+				else if (a > Skills.values().length + 1) {
+					System.out.println(OutOfRangeException);
+				}
+				else {
+					int x = 1; 
+					if (a == x) {
+						System.out.println("Returning to Stats menu...");
+						done = true;
+					}
+					else {
+						int value = getNewSkillValue();
+						for (Skills i:Skills.values()) {
+							x++;
+							if (a == x) {
+								m_enemy.set_skill(i, value);
+								System.out.println(i + " now has modifier " + m_enemy.get_skill(i));
+							}
+						}
+					}
+				}
+			}
+			catch(Exception e) {
+				System.out.println(MustBeIntException);
+				//System.out.println("Error resulting from:  " + e);
+				scanner.next();
+			}
+			
+		} while (done == false);
+		
+	}
+	
+	private static int getNewSkillValue () {
+		
+		int value = 0;
+		boolean done = false;
+		do {
+			System.out.println("Enter the new skill modifier: ");
+			try {
+				int a= scanner.nextInt();
+				if (a < -20 | a > 20) {
+					System.out.println(OutOfRangeException);
+				}
+				else {
+					value = a;
+					done = true;
+				}
+			}
+			catch(Exception e) {
+				System.out.println(MustBeIntException);
+				//System.out.println("Error resulting from:  " + e);
+				scanner.next();
+			}
+		} while (done == false);
+		return value; 
+		
+	}
+	
 	/*
 	 * Gets user input on what the Monster's Ability Modifiers should be.
 	 */
@@ -811,7 +890,7 @@ public class monsterEditor extends encounterEditor{
 		
 		boolean done = false;
 		do {
-			System.out.println("Type the name of the damage type you wish to add as a weakness.");
+			System.out.println("Type the number of the damage type you wish to add as a weakness.");
 			int n = 1;
 			System.out.println(n + ") " + "Add no weaknesses");
 			for (DamageTypes i: DamageTypes.values()) {
@@ -860,7 +939,7 @@ public class monsterEditor extends encounterEditor{
 		
 		boolean done = false;
 		do {
-			System.out.println("Type the name of the damage type you wish to remove as a weakness.");
+			System.out.println("Type the number of the damage type you wish to remove as a weakness.");
 			int n = 1;
 			System.out.println(n + ") " + "Remove no weaknesses");
 			for (DamageTypes i: DamageTypes.values()) {
