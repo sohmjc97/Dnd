@@ -1594,6 +1594,7 @@ public class monsterEditor extends encounterEditor{
 					for (Monster m: copies) {
 						m.set_name(m_enemy.get_name() + i);
 						m_encounter.append_enemy(m);
+						m_encounter.add_xp(0-m.get_xp());
 						i++;
 					}
 					done = true;

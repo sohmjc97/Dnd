@@ -494,6 +494,7 @@ public class WorldEditor extends Worldbuilder {
 		//String name = lines[0].split(": ")[1]; 
 		//int id = Integer.parseInt(lines[1].split(": ")[1]);
 		String descrip = ""; 
+		int xp = 0;
 		try {
 			descrip =  lines[2].split(": ")[1];
 		}
@@ -600,6 +601,7 @@ public class WorldEditor extends Worldbuilder {
 				String xp = line.split(": ")[1];
 				int XP = Integer.parseInt(xp);
 				enemy.set_xp(XP);
+				enemy.get_encounter().add_xp(XP);
 			}
 			if (line.contains("Damage Die")) {
 				String dmgdie = line.split(": ")[1];

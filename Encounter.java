@@ -8,6 +8,12 @@ public class Encounter {
 	 * Class to hold information on individual encounters 
 	 */
 	
+	/*
+	 * Thoughts for additional features:
+	 * Encounters know how much exp their collective monsters reward
+	 * Each Route/City knows how much exp their collective encounters reward
+	 */
+	
 	public enum EncounterType {
 		DAY,
 		NIGHT
@@ -15,8 +21,9 @@ public class Encounter {
 	
 	private static int encounter_count = 0;
 	private int m_encounter_id = 0;
+	private int m_xp = 0; 
 	private String m_name = "encounter";
-	private String m_description = "";
+	private String m_description = "No description available";
 	
 	Route m_route = null; 
 	City m_city = null;
@@ -148,6 +155,28 @@ public class Encounter {
 	}
 	
 	/*
+	 * Returns the total experience points earned by completing this encounter
+	 * 
+	 * #return	 	m_xp Integer	:the amount of cumulative XP for all monsters in this encounter
+	 */
+	public int get_xp () {
+		
+		return m_xp; 
+		
+	}
+	
+	/*
+	 * Adds xp for given encounter, used when adding in new monsters
+	 * 
+	 * @param		xp Integer		:the amount of XP to add to the encounter's total
+	 */
+	public void add_xp (int xp) {
+		
+		m_xp = m_xp + xp; 
+		
+	}
+	
+	/*
 	 * Returns the Encounter's list of enemies 
 	 * 
 	 * @return		m_enemy_list ArrayList<Monster>		:the list of Monsters belonging to this Encounter 
@@ -168,6 +197,7 @@ public class Encounter {
 		
 		Monster enemy = new Monster(name, this);
 		m_enemy_list.add(enemy);
+		m_xp += m_xp + enemy.get_xp();
 		return enemy;
 		
 	}
@@ -181,6 +211,7 @@ public class Encounter {
 	public void append_enemy (Monster monster) {
 		
 		m_enemy_list.add(monster);
+		m_xp = m_xp + monster.get_xp();
 		//monster.m_encounter = this; 
 		if (m_route == null) {
 			// if this encounter is on a city
@@ -203,6 +234,7 @@ public class Encounter {
 	public void delete_enemy(Monster monster) {
 		
 		m_enemy_list.remove(monster);
+		m_xp = m_xp - monster.get_xp();
 		monster = null; 
 		
 	}
@@ -214,6 +246,7 @@ public class Encounter {
 	public void remove_enemy (Monster monster) {
 		
 		m_enemy_list.remove(monster);
+		m_xp = m_xp - monster.get_xp();
 		
 	}
 	
@@ -225,6 +258,17 @@ public class Encounter {
 	public void set_description (String descrip) {
 		
 		m_description = descrip; 
+		
+	}
+	
+	/*
+	 * Sets the total XP of the encounter to the given number, an override to adding with each monster if necessary
+	 * 
+	 * @param		xp Integer		:the total amount of XP that this Encounter should have
+	 */
+	public void set_xp (int xp) {
+		
+		m_xp = xp; 
 		
 	}
 	
@@ -241,7 +285,7 @@ public class Encounter {
 		
 		if (m_city == null) {
 			//Route oldRoute = m_route; 
-			m_route.get_all_encounters().remove(this);
+			m_route.removeEncounter(this);
 			m_route.autoSave(); 
 		
 			m_route = newRoute; 
@@ -251,7 +295,7 @@ public class Encounter {
 		else if (m_route == null) {
 			//City oldCity = m_city;
 			System.out.println(this.get_name() + " will be removed from " + m_city.get_name());
-			m_city.get_all_encounters().remove(this);
+			m_city.removeEncounter(this);
 			m_city.autoSave();
 			//System.out.println(m_city.get_name() + " now has Encounters: ");
 			//for (Encounter e: m_city.get_all_encounters()) {
@@ -358,6 +402,7 @@ public class Encounter {
 		else {
 			output = output + "Location: " + m_route.get_name() + "\n";
 		}
+		output = output + "Total XP: " + m_xp + "\n";
 		output = output + "Type: " + m_encounter_type +"\n";
 		output = output + "Enemies: \n";
 		for (Monster i: m_enemy_list) {

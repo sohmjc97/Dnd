@@ -428,6 +428,11 @@ public class encounterEditor extends WorldEditor {
 			try {
 				int a = scanner.nextInt();
 				if (a == 1) {
+					int xp = 0;
+					for (Monster m: m_encounter.get_enemies()) {
+						xp = xp + m.get_xp();
+					}
+					m_encounter.set_xp(xp);
 					m_encounter.autoSave(); 
 					System.out.println(m_encounter.get_name() + " has been saved to a file.");
 					done = true;
